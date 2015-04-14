@@ -2,122 +2,57 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Homework 3 - MyWorld Data</title>
+    <title></title>
 
-    <!-- ADD Libraries-->
     <script src="libs/d3/d3.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="https://raw.githubusercontent.com/markmarkoh/datamaps/v0.2.10/dist/datamaps.world.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
 
-
-    <!--Stylesheets-->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
-
-    <!-- Get some nice font-->
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
 
-
-    <!--------------------------------->
-    <!-- FROM HERE ON IT IS HW3 stuff-->
-    <!--------------------------------->
-    <!-- add own vis classes-->
-    <script src = "js/priovis.js"></script>
-    <script src = "js/agevis.js"></script>
-    <script src = "js/countvis.js"></script>
-    <script src = "js/newvis.js"></script>    
+    <!-- Our visualizations !-->
+    <script src = "js/priovis.js"></script>   
 
     <!-- add own stylesheet-->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
 
 </head>
 <body>
-    <div class="container">
-        <h1>Homework 3 - MyWorld 2015 Data Visualization</h1>
-
-        <div class="row">
-            <div class="col-md-8 col-sm-12">
-               <p> The following visualization shows you the votes for MyWorld 2015. You can select a time range to see changes in the distribution of votes und distribution of age of the voters.</p>
-            </div>
-
+    <div class="row" style="width: 96%;">
+        <div id="title-row">
+            <h1 class="title"> Analyzing Congressional Travel Data from 2007-Present <span class="authors"> by Steven Kekacs, Robert Doles, and Kunal Mehta </span> </h1>
+            <h3 class="subtitle"> Can analyzing where congressmen travel give insights to what is important to them? </h3>
         </div>
-
-        <div class="row">
-
-            <div class="col-md-8">
-                <b>current brush:</b> <span id="brushInfo">Thu Nov 29 2012 - Tue Dec 31 2013</span>
-            </div>
-
-
-
-        </div>
-
-
-
-        <div class="row">
-            <div class="col-md-9" id="countVis">
-                <!-- TODO: delete placeholder svg element -->
-                <svg width="650" height="330" style="background-color: lightblues">
-                    <!--<text x="50" y="50">HERE should be CountVis</text> -->
-                </svg>
-            </div>
-            <div class="col-md-3" id="ageVis">
-                <!-- TODO: delete placeholder svg element -->
-                <svg width="230" height="330" style="background-color: lightcorals">
-                    <!--<text x="50" y="50">HERE should be AgeVis</text> -->
-                </svg>
+    </div>
+    <div class="row" id="body-row">
+        <div class="col col-md-2">
+            <div id="update-lists" class="body">
+            A BUNCH OF LISTS BLAH BLAH BLAH
             </div>
         </div>
-
-        <div class="row">
-                <h4><b>Compare data from brushed selection (colored bars) to normalized averages (black outlines) from the entire dataset!</b></h4>
-
-        </div>
-
-
-
-        <div class="row">
-          <form onchange='$(MyEventHandler).trigger("selectionChanged", 0);'>
-          Normalize Averages by:   
-            <label><input type="radio" name="layout" id="avg_by_days" value="by_days" checked>     Number of Days</label>
-            <label><input type="radio" name="layout" value="by_votes" > Number of Votes</label>
-          </form>
-
-        </div>
-
-
-        <div class="row">
-            <div class="col-md-12" id="newVis">
-                <!-- TODO: delete placeholder svg element -->
-                <svg width="650" height="440" style="background-color: lightgreens">
-                    <!--<text x="50" y="50">HERE should be PrioVis</text>-->
-                </svg>
+        <div class="col col-md-7">
+            <div  id="map" class="body">
+            OUR GIANT WORLD MAP
             </div>
-
         </div>
-
-
-        <div class="row">
-            <div class="col-md-12" id="prioVis">
-                <!-- TODO: delete placeholder svg element -->
-                <svg width="650" height="440" style="background-color: lightgreens">
-                    <!--<text x="50" y="50">HERE should be PrioVis</text>-->
-                </svg>
+        <div class="col col-md-3">
+            <div id="filters" class="body">
+            OUR FILTERS YAY FILTER STUFF
             </div>
-
         </div>
-
-
-
-
-
-
+    </div>
+    <div class="row" id="graphs-row">
+        <div class="col col-md-12">
+        A BUNCH OF SWEET GRAPHS AWESOME
+        </div>
     </div>
 
-
-
     <script>
-        $(function(){ // this function is called after the HTML document is fully loaded
+        /*$(function(){ // this function is called after the HTML document is fully loaded
             //==========================================
             //--- HERE IS WHERE ALL THE MAGIC STARTS --
             //==========================================
@@ -162,7 +97,7 @@
                     *   prios: [..,..,..,...] (array of number of votes per priority -> array length =16)
                     *   ages: [..,..,..,..] (array counts of votes per age 0-99)
                     *
-                    * */
+                    * 
                     allData = _allData.map(function (d) {
                                 var res = {
                                     time: dateFormatter.parse(d.day),
@@ -215,12 +150,12 @@
         })
         /**
          * Helper function that gets the width of a D3 element
-         */
+         
         var getInnerWidth = function(element) {
             var style = window.getComputedStyle(element.node(), null);
 
             return parseInt(style.getPropertyValue('width'));
-        }
+        }/*
     </script>
 </body>
 </html>
