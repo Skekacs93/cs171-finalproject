@@ -8,22 +8,26 @@
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
-    <script src="https://raw.githubusercontent.com/markmarkoh/datamaps/v0.2.10/dist/datamaps.world.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
     <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="libs/topojson-js/topojson.min.js"></script>
+    <script src="libs/datamaps.world.min.js"></script>
 
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />
+
     <!-- Our visualizations !-->
     <script src = "js/priovis.js"></script>   
 
     <!-- add own stylesheet-->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+
+    <script src = "js/mapvis.js"></script>
 
 </head>
 <body>
@@ -40,7 +44,7 @@
             </div>
         </div>
         <div class="col col-md-8">
-            <div  id="map" class="body">
+            <div  id="mapVis" class="body">
             OUR GIANT WORLD MAP
             </div>
         </div>
@@ -63,7 +67,82 @@
     </div>
 
     <script>
-        
+    $(function(){ // called after HTML is fully loaded
+        var allData = []
+        console.log("MAKING MAP!")
+        var map = new Datamap({
+            scope: 'world',
+            element: document.getElementById('mapVis'),
+            projection: 'orthographic',
+            fills: {
+              defaultFill: "#ABDDA4",
+            },
+            projectionConfig: {
+              rotation: [97,-30]
+            },
+            data: {
+              'USA': {fillKey: 'lt50' },
+              'MEX': {fillKey: 'lt25' },
+              'CAN': {fillKey: 'gt50' },     
+              'GTM': {fillKey: 'gt500'},
+              'HND': {fillKey: 'eq50' },
+              'BLZ': {fillKey: 'pink' },
+              'GRL': {fillKey: 'eq0' },
+              'CAN': {fillKey: 'gt50' }       
+            }
+        });
+
+        map.graticule();
+
+        map.arc([{
+            origin: {
+                latitude: 61,
+                longitude: -149
+            },
+            destination: {
+                latitude: -22,
+                longitude: -43
+            }
+            }], {
+            greatArc: true,
+            animationSpeed: 2000
+        });
+
+
+        var initVis = function(){
+            MyEventHandler = new Object();
+
+            map_vis = new MapVis(d3.select("#mapVis"), allData, MyEventHandler);
+
+            $(MyEventHandler).bind("selectionChanged", function(event, type){map_vis.onSelectionChange(type);});
+
+        }
+
+        var dataLoaded = function(error, _allData){
+            if(!error){
+                allData = _allData.map(function(d){
+                    return d
+                })
+                initVis();
+            }
+        }
+
+        var startHere = function(){
+            queue()
+                .defer(d3.json, "data/travel.json")
+                .await(dataLoaded)
+        }
+        startHere();
+
+    })
+    /**
+     * Helper function that gets the width of a D3 element
+     */
+    var getInnerWidth = function(element) {
+        var style = window.getComputedStyle(element.node(), null);
+
+        return parseInt(style.getPropertyValue('width'));
+    }
     </script>
 </body>
 </html>
