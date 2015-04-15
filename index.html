@@ -8,11 +8,21 @@
     <script src="http://d3js.org/queue.v1.min.js"></script>
     <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     <script src="libs/topojson-js/topojson.min.js"></script>
     <script src="libs/datamaps.all.min.js"></script>
 
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
-    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'> 
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Our visualizations !-->
+    <script src = "js/priovis.js"></script>   
 
     <!-- add own stylesheet-->
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
@@ -33,13 +43,19 @@
             A BUNCH OF LISTS BLAH BLAH BLAH
             </div>
         </div>
-        <div class="col col-md-7">
+        <div class="col col-md-8">
             <div  id="mapVis" class="body">
             </div>
         </div>
-        <div class="col col-md-3">
+        <div class="col col-md-2">
             <div id="filters" class="body">
-            OUR FILTERS YAY FILTER STUFF
+                <div class="filters-header"> Filter Travel Lines </div>
+                <select class="filter-committee select2">
+                </select>
+                <div class="filters-header"> Color Travel Lines </div>
+                <div class="filters-header"> Size Travel Lines </div>
+                <div class="filters-header"> Color Destinations </div>
+                <div class="filters-header"> Size  Destinations</div>
             </div>
         </div>
     </div>
