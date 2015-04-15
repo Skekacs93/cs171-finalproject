@@ -35,6 +35,7 @@
     height:300px;
     width: 97.2%;
     margin-left: 25px;
+    margin-top: 50px;
 }
 
 #update-lists {
@@ -68,7 +69,16 @@
     border-bottom: 2px solid black;
 }
 
-.select2 {
-    margin-top:10px;
+.select {
+    width: 100%;
+}
+.chosen-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
     width:100%;
+}
+
+.chosen-container .chosen-results li {
+    line-height: 20px;
 }

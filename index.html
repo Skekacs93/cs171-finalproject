@@ -18,6 +18,8 @@
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/chosen.min.css">
+    <link rel="stylesheet" type="text/css" href="css/datepicker3.css">
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />  
 
@@ -25,6 +27,8 @@
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
 
     <script src = "js/mapvis.js"></script>
+    <script src = "js/chosen.jquery.min.js"></script>
+    <script src = "js/bootstrap-datepicker.js"></script>
 
 </head>
 <body>
@@ -46,13 +50,40 @@
         </div>
         <div class="col col-md-2">
             <div id="filters" class="body">
-                <div class="filters-header"> Filter Travel Lines </div>
-                <select class="filter-committee select2">
+                <div class="filters-header"> Filter Travel </div>
+                <select data-placeholder="Select a Representative" id = "filter-member" class="select">
                 </select>
-                <div class="filters-header"> Color Travel Lines </div>
-                <div class="filters-header"> Size Travel Lines </div>
-                <div class="filters-header"> Color Destinations </div>
-                <div class="filters-header"> Size  Destinations</div>
+                <select data-placeholder="Select a Destination Country" id = "filter-country" class="select">
+                </select>
+                <select data-placeholder="Select a Destination State" id = "filter-state" class="select">
+                </select>
+                <select data-placeholder="Filter by Party" id = "filter-party" class="select">
+                    <option value=""></option>
+                    <option value="R">Republican</option>
+                    <option value="D">Democrat</option>
+                </select>
+                <select data-placeholder="Filter by Committee" id = "filter-committee" class="select">
+                </select>
+                <select data-placeholder="Filter by Ethnicity" id = "filter-ethnicity" class="select">
+                </select>
+                <select data-placeholder="Filter by Religion" id = "filter-religion" class="select">
+                </select>
+                <div class="input-daterange input-group" id="datepicker" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input type="text" class="input-sm form-control" name="start" />
+                    <span class="input-group-addon">to</span>
+                    <input type="text" class="input-sm form-control" name="end" />
+                </div>
+                <div class="filters-header"> Color Travel </div>
+                <select data-placeholder="Color by Party" id = "color-party" class="select">
+                    <option value=""></option>
+                    <option value="R">Republican</option>
+                    <option value="D">Democrat</option>
+                </select>
+                <select data-placeholder="Color by Ethnicity" id = "color-ethnicity" class="select">
+                </select>
+                <select data-placeholder="Color by Religion" id = "color-religion" class="select">
+                </select>
+
             </div>
         </div>
     </div>
@@ -65,6 +96,77 @@
     <script>
     $(function(){ // called after HTML is fully loaded
         var allData = []
+        var metaData = []
+
+
+        var initFilters = function() {
+            d3.select("#filter-member")
+                .selectAll("option")
+                    .data(metaData["people"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-state")
+                .selectAll("option")
+                    .data(metaData["states"])
+                .enter().append("option")
+                    .text(function(d) { return d[1] })
+                    .attr("value", function(d) { return d[0] });
+            d3.select("#filter-country")
+                .selectAll("option")
+                    .data(metaData["countries"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-committee")
+                .selectAll("option")
+                    .data(metaData["committees"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-committee")
+                .selectAll("option")
+                    .data(metaData["committees"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-ethnicity")
+                .selectAll("option")
+                    .data(metaData["ethnicities"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-religion")
+                .selectAll("option")
+                    .data(metaData["religions"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+
+            $('.input-daterange').datepicker({
+                clearBtn: true,
+            });
+
+            $("#filter-member").chosen({allow_single_deselect: true});
+            $("#filter-country").chosen({allow_single_deselect: true});
+            $("#filter-state").chosen({allow_single_deselect: true});
+            $("#filter-party").chosen({allow_single_deselect: true});
+            $("#filter-committee").chosen({allow_single_deselect: true});
+            $("#filter-ethnicity").chosen({allow_single_deselect: true});
+            $("#filter-religion").chosen({allow_single_deselect: true});
+
+            d3.select("#color-ethnicity")
+                .selectAll("option")
+                    .data(metaData["ethnicities"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#color-religion")
+                .selectAll("option")
+                    .data(metaData["religions"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+
+            $("#color-party").chosen({allow_single_deselect: true});
+            $("#color-ethnicity").chosen({allow_single_deselect: true});
+            $("#color-religion").chosen({allow_single_deselect: true});
+
+        }
+
+            
 
         var initVis = function(){
             MyEventHandler = new Object();
@@ -75,11 +177,13 @@
 
         }
 
-        var dataLoaded = function(error, _allData){
+        var dataLoaded = function(error, _allData, _metaData){
             if(!error){
                 allData = _allData.map(function(d){
                     return d
                 })
+                metaData = _metaData
+                initFilters();
                 initVis();
             }
         }
@@ -87,6 +191,7 @@
         var startHere = function(){
             queue()
                 .defer(d3.json, "data/travel.json")
+                .defer(d3.json, "data/metadata.json")
                 .await(dataLoaded)
         }
         startHere();
