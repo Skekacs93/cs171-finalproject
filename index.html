@@ -45,11 +45,10 @@
             </div>
         </div>
         <div class="col col-md-8">
-            <div  id="mapVis" class="body">
-            </div>
+            <div  id="mapVis" class="body"></div>
         </div>
         <div class="col col-md-2">
-            <div id="filters" class="body">
+            <div id="filters" class="body" onchange='console.log("HI");$(MyEventHandler).trigger("selectionChanged");'>
                 <div class="filters-header"> Filter Travel </div>
                 <select data-placeholder="Select a Representative" id = "filter-member" class="select">
                 </select>
@@ -181,7 +180,7 @@
 
             map_vis = new MapVis(d3.select("#mapVis"), allData, MyEventHandler);
 
-            $(MyEventHandler).bind("selectionChanged", function(event, type){map_vis.onSelectionChange(type);});
+            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange();});
 
         }
 

@@ -107,8 +107,12 @@ MapVis.prototype.updateVis = function(){
  * be defined here.
  * @param selection
  */
-MapVis.prototype.onSelectionChange= function (selectionStart, selectionEnd){
+MapVis.prototype.onSelectionChange= function (){
     // TODO: call wrangle function
+    node = document.getElementById("mapVis")
+    while (node.hasChildNodes()) {
+        node.removeChild(node.lastChild);
+    }
     this.wrangleData(null);
     this.updateVis();
 }
@@ -129,23 +133,33 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     // var filter = _filter || function(){return true;}
 
     // define date filters
-    var date_start = "2014-01-01"
-    var date_end = "2014-02-05"
-
+    var date_start = document.getElementsByName("start")[0].value
+    if (date_start == ''){
+        date_start = '01/01/1900'
+    }
+    date_start = new Date(date_start.slice(6) + '-' + date_start.slice(0, 2) + '-' + date_start.slice(3, 5))
+    var date_end = document.getElementsByName("end")[0].value
+    if (date_end == ''){
+        date_end = '01/01/2100'
+    }
+    date_end = new Date(date_end.slice(6) + '-' + date_end.slice(0, 2) + '-' + date_end.slice(3, 5))
     // define party filter
-    var thisparty = "D"
-    var filter_party = true
-
+    var party_filter = document.getElementById("filter-party").value
+    party_filter = party_filter.replace("Republican", "R").replace("Democrat", "D")
     // define ethnicity filter
-    var this_ethnicity = "White/Caucasian"
-    var filter_ethnicity = true
+    var ethnicity_filter = document.getElementById("filter-ethnicity").value
 
     // define religion filter
-    var this_religion = "Baptist"
-    var filter_religion = true
+    var religion_filter = document.getElementById("filter-religion").value
 
-    var this_person = "Rep. Ron DeSantis (R-FL6)"
-    var filter_person = true
+    var person_filter = document.getElementById("filter-member").value
+
+    var sponsor_filter = document.getElementById("filter-sponsor").value
+
+    var committee_filter = document.getElementById("filter-committee").value
+
+    var country_filter = document.getElementById("filter-country").value
+    var state_filter = document.getElementById("filter-state").value
 
     arcs = [{
             origin: {
@@ -161,32 +175,34 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     data = that.data;
     console.log("FILTERING DATA")
     var arcs = []
+    console.log(date_start)
+
     data.forEach(function(d, i){
-      if (d.departure_date > date_start && d.departure_date < date_end){
-        if (d.party == thisparty || filter_party == false){
-          if (d.ethnicity == this_ethnicity || filter_ethnicity == false){
-            if (filter_person == false || d.person == this.person){
-              // HERE FINISH ADDING FILTERS!
+
+      var departure_date = new Date(d.departure_date)
+      if (departure_date > date_start && departure_date < date_end){
+        if (d.party == party_filter || party_filter == ''){
+          if (d.ethnicity == ethnicity_filter || ethnicity_filter == ''){
+            if (d.person == person_filter || person_filter == ''){
+              if (d.destination_country == country_filter || country_filter == ''){
+                if (d.state == state_filter || state_filter == ''){
+                  if (d.religion == religion_filter || religion_filter == ''){ 
+                    var committees = d.committees.replace('["', '').replace('"]', '').split('", "')
+                    if (committees.indexOf(committee_filter) > -1 || committee_filter == ''){
+                      var sponsors = d.sponsor.replace('["', '').replace('"]', '').split('", "')
+                      if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
+                        thistrip = {origin:{latitude: d.departure_latitude, longitude: d.departure_longitude}, destination:{latitude: d.destination_latitude, longitude: d.destination_longitude}}
+                        arcs.push(thistrip)  
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
-
-
-        thistrip = {}
-        thistrip.origin = {}
-        thistrip.destination = {}
-        thistrip.origin.latitude = d.departure_latitude
-        thistrip.origin.longitude = d.departure_longitude
-        thistrip.destination.latitude = d.destination_latitude
-        thistrip.destination.longitude = d.destination_longitude
-        thistrip.religion = "hi"
-        if (arcs.indexOf(thistrip) > -1){
-          console.log("HI")
-        }
-        console.log(arcs.indexOf(thistrip))
-        arcs.push(thistrip)
       }
-      //console.log(d)
+
     })
     console.log(arcs.length)
     // create an array of values for age 0-100
