@@ -127,6 +127,26 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     }
     //Dear JS hipster, a more hip variant of this construct would be:
     // var filter = _filter || function(){return true;}
+
+    // define date filters
+    var date_start = "2014-01-01"
+    var date_end = "2014-02-05"
+
+    // define party filter
+    var thisparty = "D"
+    var filter_party = true
+
+    // define ethnicity filter
+    var this_ethnicity = "White/Caucasian"
+    var filter_ethnicity = true
+
+    // define religion filter
+    var this_religion = "Baptist"
+    var filter_religion = true
+
+    var this_person = "Rep. Ron DeSantis (R-FL6)"
+    var filter_person = true
+
     arcs = [{
             origin: {
                 latitude: 61,
@@ -142,7 +162,16 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     console.log("FILTERING DATA")
     var arcs = []
     data.forEach(function(d, i){
-      if (d.departure_date > "2014-01-01"){
+      if (d.departure_date > date_start && d.departure_date < date_end){
+        if (d.party == thisparty || filter_party == false){
+          if (d.ethnicity == this_ethnicity || filter_ethnicity == false){
+            if (filter_person == false || d.person == this.person){
+              // HERE FINISH ADDING FILTERS!
+            }
+          }
+        }
+
+
         thistrip = {}
         thistrip.origin = {}
         thistrip.destination = {}
@@ -150,10 +179,16 @@ MapVis.prototype.filterAndAggregate = function(_filter){
         thistrip.origin.longitude = d.departure_longitude
         thistrip.destination.latitude = d.destination_latitude
         thistrip.destination.longitude = d.destination_longitude
+        thistrip.religion = "hi"
+        if (arcs.indexOf(thistrip) > -1){
+          console.log("HI")
+        }
+        console.log(arcs.indexOf(thistrip))
         arcs.push(thistrip)
       }
       //console.log(d)
     })
+    console.log(arcs.length)
     // create an array of values for age 0-100
     var res = d3.range(16).map(function () {
         return [0, 0, 0];
