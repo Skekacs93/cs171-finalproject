@@ -5,11 +5,13 @@
 
 //TODO: DO IT ! :) Look at agevis.js for a useful structure
 
-MapVis = function(_parentElement, _data, _eventHandler){
+MapVis = function(_parentElement, _data, _metaData, _eventHandler){
     this.parentElement = _parentElement;
     this.data = _data;
+    this.metaData = _metaData;
     this.eventHandler = _eventHandler;
     this.displayData = [];
+    this.viztype = document.getElementById("viztype").value;
 
     // define all constants here
     this.margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -67,8 +69,13 @@ MapVis.prototype.updateVis = function(){
     // But it's not needed to solve the task.
     // var options = _options || {};
     var that = this;
-    arcs = this.displayData
-
+    this.viztype = document.getElementById("viztype").value;
+    if(this.viztype == "arcs") {
+        arcs = this.displayData
+    }
+    else {
+        dots = this.displayData;
+    }
 
         var map = new Datamap({
             scope: 'world',
@@ -76,9 +83,14 @@ MapVis.prototype.updateVis = function(){
             projection: 'equirectangular',
             fills: {
               defaultFill: "#ABDDA4",
+              bub: 'blue',
             },
             projectionConfig: {
               rotation: [97,-30]
+            },
+            geographyConfig: {
+                popupOnHover: false,
+                highlightOnHover: false,
             },
             data: {
               'USA': {fillKey: 'lt50' },
@@ -93,11 +105,18 @@ MapVis.prototype.updateVis = function(){
         });
 
         map.graticule();
-
-        map.arc(arcs, {
-            greatArc: true,
-            animationSpeed: 2000
-        });
+        if(this.viztype == "arcs") {
+            map.arc(arcs, {
+                greatArc: true,
+                animationSpeed: 2000
+            });
+        }
+        else {
+            console.log(dots)
+            map.bubbles(dots, {popupTemplate: function(geo, data) {
+                return '<div class="hoverinfo"><strong>' + data.person + '</strong><br>' + data.startdate + ' to ' + data.enddate + '</div>'
+            }})
+        }
 
 }
 
@@ -135,12 +154,14 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     // define date filters
     var date_start = document.getElementsByName("start")[0].value
     if (date_start == ''){
-        date_start = '01/01/1900'
+        date_start = '01/01/2014'
+        $("#startdate").val('01/01/2014')
     }
     date_start = new Date(date_start.slice(6) + '-' + date_start.slice(0, 2) + '-' + date_start.slice(3, 5))
     var date_end = document.getElementsByName("end")[0].value
     if (date_end == ''){
-        date_end = '01/01/2100'
+        date_end = '04/01/2015'
+        $("#enddate").val('04/01/2015')
     }
     date_end = new Date(date_end.slice(6) + '-' + date_end.slice(0, 2) + '-' + date_end.slice(3, 5))
     // define party filter
@@ -161,6 +182,14 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     var country_filter = document.getElementById("filter-country").value
     var state_filter = document.getElementById("filter-state").value
 
+    var viztype = document.getElementById("viztype").value;
+
+    //coloring
+    var color_by = document.getElementById("color-by").value
+    color_map = {'party': {'R': 'red', 'D': 'blue'}}
+    ethmap = d3.scale.category20().domain(this.metaData["ethnicities"])
+    relmap = d3.scale.category20c().domain(this.metaData["religions"])
+
     arcs = [{
             origin: {
                 latitude: 61,
@@ -174,8 +203,12 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     var that = this;
     data = that.data;
     console.log("FILTERING DATA")
-    var arcs = []
-    console.log(date_start)
+    if(viztype == "arcs") {
+        var arcs = []
+    }
+    else {
+        var dots = []
+    }
 
     data.forEach(function(d, i){
 
@@ -191,8 +224,26 @@ MapVis.prototype.filterAndAggregate = function(_filter){
                     if (committees.indexOf(committee_filter) > -1 || committee_filter == ''){
                       var sponsors = d.sponsor.replace('["', '').replace('"]', '').split('", "')
                       if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
-                        thistrip = {origin:{latitude: d.departure_latitude, longitude: d.departure_longitude}, destination:{latitude: d.destination_latitude, longitude: d.destination_longitude}}
-                        arcs.push(thistrip)  
+                        if(color_by == 'none') {
+                            color = '#9467bd'
+                        }
+                        else if(color_by == "party") {
+                            color = color_map[color_by][d[color_by]]
+                        }
+                        else if(color_by == "ethnicity") {
+                            color = ethmap(d.ethnicity)
+                        }
+                        else if(color_by == "religion") {
+                            color = relmap(d.ethnicity)
+                        }
+                        if(document.getElementById("viztype").value == "arcs") {
+                            thistrip = {origin:{latitude: d.departure_latitude, longitude: d.departure_longitude}, destination:{latitude: d.destination_latitude, longitude: d.destination_longitude}, options: {strokeColor: color}}
+                            arcs.push(thistrip)  
+                        }
+                        else {
+                            dot = {radius: 10, fillKey: 'bub', person: d.person, sponsor: sponsors, destination: d.destination, ethnicity: d.ethnicity, startdate: d.departure_date, enddate: d.return_date, religion: d.religion, committees: committees, latitude: d.destination_latitude, longitude: d.destination_longitude}
+                            dots.push(dot)
+                        }
                       }
                     }
                   }
@@ -209,8 +260,12 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     var res = d3.range(16).map(function () {
         return [0, 0, 0];
     });
-
-    return arcs;
+    if(viztype == "arcs") {
+        return arcs;
+    }
+    else {
+        return dots;
+    }
 }
 
 

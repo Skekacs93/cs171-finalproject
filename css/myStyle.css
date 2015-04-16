@@ -81,3 +81,8 @@
 .chosen-container .chosen-results li {
     line-height: 20px;
 }
+
+.hoverinfo {
+    width: 300px;
+    font-size: 18px !important;
+}

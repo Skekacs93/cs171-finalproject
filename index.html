@@ -48,7 +48,12 @@
             <div  id="mapVis" class="body"></div>
         </div>
         <div class="col col-md-2">
-            <div id="filters" class="body" onchange='console.log("HI");$(MyEventHandler).trigger("selectionChanged");'>
+            <div id="filters" class="body" onchange='console.log("HI");'>
+                <div class="filters-header"> Select Visualization </div>
+                <select style="margin-top: 10px; margin-bottom: 10px" class="select" id="viztype">
+                    <option value="arcs">Arcs</option>
+                    <option value="dots">Dots</option>
+                </select>
                 <div class="filters-header"> Filter Travel </div>
                 <select data-placeholder="Select a Representative" id = "filter-member" class="select">
                 </select>
@@ -70,19 +75,16 @@
                 <select data-placeholder="Filter by Religion" id = "filter-religion" class="select">
                 </select>
                 <div class="input-daterange input-group" id="datepicker" style="margin-top: 10px; margin-bottom: 10px;">
-                    <input type="text" class="input-sm form-control" name="start" />
+                    <input id="startdate" type="text" class="input-sm form-control" name="start" />
                     <span class="input-group-addon">to</span>
-                    <input type="text" class="input-sm form-control" name="end" />
+                    <input id="enddate" type="text" class="input-sm form-control" name="end" />
                 </div>
                 <div class="filters-header"> Color Travel </div>
-                <select data-placeholder="Color by Party" id = "color-party" class="select">
-                    <option value=""></option>
-                    <option value="R">Republican</option>
-                    <option value="D">Democrat</option>
-                </select>
-                <select data-placeholder="Color by Ethnicity" id = "color-ethnicity" class="select">
-                </select>
-                <select data-placeholder="Color by Religion" id = "color-religion" class="select">
+                <select data-placeholder="Color by Party" id = "color-by" class="select">
+                    <option value="none"></option>
+                    <option value="ethnicity">Ethnicity</option>
+                    <option value="party">Party</option>
+                    <option value="religion">Religion</option>
                 </select>
 
             </div>
@@ -96,6 +98,8 @@
 
     <script>
     $(function(){ // called after HTML is fully loaded
+
+        $(".select").change(function() { $(MyEventHandler).trigger("selectionChanged"); })
         var allData = []
         var metaData = []
 
@@ -155,21 +159,8 @@
             $("#filter-ethnicity").chosen({allow_single_deselect: true});
             $("#filter-religion").chosen({allow_single_deselect: true});
             $("#filter-sponsor").chosen({allow_single_deselect: true});
-
-            d3.select("#color-ethnicity")
-                .selectAll("option")
-                    .data(metaData["ethnicities"])
-                .enter().append("option")
-                    .text(function(d) { return d });
-            d3.select("#color-religion")
-                .selectAll("option")
-                    .data(metaData["religions"])
-                .enter().append("option")
-                    .text(function(d) { return d });
-
-            $("#color-party").chosen({allow_single_deselect: true});
-            $("#color-ethnicity").chosen({allow_single_deselect: true});
-            $("#color-religion").chosen({allow_single_deselect: true});
+            $("#color-by").chosen({allow_single_deselect: true});
+            
 
         }
 
@@ -178,7 +169,7 @@
         var initVis = function(){
             MyEventHandler = new Object();
 
-            map_vis = new MapVis(d3.select("#mapVis"), allData, MyEventHandler);
+            map_vis = new MapVis(d3.select("#mapVis"), allData, metaData, MyEventHandler);
 
             $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange();});
 
