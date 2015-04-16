@@ -82,8 +82,49 @@ MapVis.prototype.updateVis = function(){
             element: document.getElementById('mapVis'),
             projection: 'equirectangular',
             fills: {
-              defaultFill: "#ABDDA4",
-              bub: 'blue',
+                defaultFill: "#ABDDA4",
+                bub: '#9467bd',
+                HawaiianPacificIslander: '#aec7e8',
+                Other: '#ff7f0e',
+                WhiteCaucasian:'#ffbb78',
+                IndianNativeAmerican:'#2ca02c',
+                BlackAfricanAmerican:'#98df8a',
+                AsianPacificAmerican:'#d62728',
+                HispanicLatino:'#ff9896',
+                TwoorMoreEthnicities:'#9467bd',
+                R: 'red',
+                D: 'blue',
+                Catholic:'#c5b0d5',
+                Episcopalian:'#8c564b',
+                GreekOrthodox:'#c49c94',
+                Unitarian:'#e377c2',
+                AfricanMethodistEpiscopal:'#f7b6d2',
+                Hinduism:'#7f7f7f',
+                Jewish:'#c7c7c7',
+                Mormon:'#bcbd22',
+                ChristianReformedChurch:'#dbdb8d',
+                SeventhDayAdventist:'#17becf',
+                RomanCatholic:'#9edae5',
+                Islam:'#1f77b4',
+                DisciplesofChrist:'#aec7e8',
+                Evangelical:'#ff7f0e',
+                Baptist:'#ffbb78',
+                AnglicanCatholic:'#2ca02c',
+                ChristianChurch:'#98df8a',
+                Nazarene:'#d62728',
+                ProtestantUnspecifiedChristian:'#ff9896',
+                Congregationalist:'#9467bd',
+                Methodist:'#c5b0d5',
+                Buddhism:'#8c564b',
+                UnitedChurchofChrist:'#c49c94',
+                ChristianScientist:'#e377c2',
+                SouthernBaptist:'#f7b6d2',
+                EasternOrthodox:'#7f7f7f',
+                Lutheran:'#c7c7c7',
+                AssemblyofGod:'#bcbd22',
+                Presbyterian:'#dbdb8d',
+                ChurchofChrist:'#17becf',
+                Pentecostal:'#9edae5',
             },
             projectionConfig: {
               rotation: [97,-30]
@@ -114,7 +155,7 @@ MapVis.prototype.updateVis = function(){
         else {
             console.log(dots)
             map.bubbles(dots, {popupTemplate: function(geo, data) {
-                return '<div class="hoverinfo"><strong>' + data.person + '</strong><br>' + data.startdate + ' to ' + data.enddate + '</div>'
+                return '<div class="hoverinfo"><strong>' + data.person + '</strong><br>' + data.startdate + ' to ' + data.enddate + '<br>' + data.destination + '<br>' + 'Ethnicity: ' + data.ethnicity.replace('null', 'Not Specified') + '</div>'
             }})
         }
 
@@ -189,7 +230,10 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     color_map = {'party': {'R': 'red', 'D': 'blue'}}
     ethmap = d3.scale.category20().domain(this.metaData["ethnicities"])
     relmap = d3.scale.category20c().domain(this.metaData["religions"])
-
+    for (var i = 0; i < this.metaData["religions"].length; i++) {
+        l = this.metaData["religions"][i]
+        console.log(l.replace('/','').replace(' ','').replace(' ','').replace(' ','').replace('-','') + ":" + ethmap(l) + ",")
+    };
     arcs = [{
             origin: {
                 latitude: 61,
@@ -241,7 +285,30 @@ MapVis.prototype.filterAndAggregate = function(_filter){
                             arcs.push(thistrip)  
                         }
                         else {
-                            dot = {radius: 10, fillKey: 'bub', person: d.person, sponsor: sponsors, destination: d.destination, ethnicity: d.ethnicity, startdate: d.departure_date, enddate: d.return_date, religion: d.religion, committees: committees, latitude: d.destination_latitude, longitude: d.destination_longitude}
+                            if(color_by == "ethnicity") {
+                                if(d[color_by] == null) {
+                                    fkey = 'bub'
+                                }
+                                else {
+                                    fkey = d[color_by].replace('/','').replace(' ','').replace(' ','').replace(' ','')
+                                }
+                            }
+                            else if(color_by == "party") {
+                                fkey = d[color_by]
+                                console.log(fkey)
+                            }
+                            else if(color_by == "religion") {
+                                if(d[color_by] == null) {
+                                    fkey = 'bub'
+                                }
+                                else {
+                                    fkey = d[color_by].replace('/','').replace(' ','').replace(' ','').replace(' ','').replace('-','')
+                                }
+                            }
+                            else {
+                                fkey = 'bub'
+                            }
+                            dot = {radius: 10, fillKey: fkey, person: d.person, sponsor: sponsors, destination: d.destination, ethnicity: d.ethnicity, startdate: d.departure_date, enddate: d.return_date, religion: d.religion, committees: committees, latitude: d.destination_latitude, longitude: d.destination_longitude}
                             dots.push(dot)
                         }
                       }
