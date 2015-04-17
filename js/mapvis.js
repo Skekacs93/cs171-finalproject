@@ -168,7 +168,6 @@ MapVis.prototype.updateVis = function(){
             });
         }
         else {
-            console.log(dots)
             map.bubbles(dots, {popupTemplate: function(geo, data) {
                 if(data.ethnicity == null) {
                     data.ethnicity = 'Not Specified'
@@ -220,12 +219,19 @@ MapVis.prototype.filterAndAggregate = function(_filter){
         $("#startdate").val('01/01/2014')
     }
     date_start = new Date(date_start.slice(6) + '-' + date_start.slice(0, 2) + '-' + date_start.slice(3, 5))
+    d3.select('.begin-date').html(date_start.toDateString());
+
     var date_end = document.getElementsByName("end")[0].value
     if (date_end == ''){
         date_end = '04/01/2015'
         $("#enddate").val('04/01/2015')
     }
     date_end = new Date(date_end.slice(6) + '-' + date_end.slice(0, 2) + '-' + date_end.slice(3, 5))
+    d3.select('.end-date').html(date_end.toDateString());
+    
+    var left = ($('#mapVis').width() - $('.date').width())/2;
+    d3.select('.date').style('left', String(left)+'px');
+    d3.select('.date').style('display', 'inline');
     // define party filter
     var party_filter = document.getElementById("filter-party").value
     party_filter = party_filter.replace("Republican", "R").replace("Democrat", "D")
