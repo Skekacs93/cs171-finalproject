@@ -32,7 +32,14 @@
 }
 
 #graphs-row {
-    height:300px;
+    height:200px;
+    width: 97.2%;
+    margin-left: 25px;
+}
+
+#table-row {
+    height:200px;
+    overflow-y: scroll;
     width: 97.2%;
     margin-left: 25px;
 }
