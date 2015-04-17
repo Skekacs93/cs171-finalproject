@@ -137,6 +137,10 @@ MapVis.prototype.updateVis = function(){
                 popupOnHover: false,
                 highlightOnHover: false,
             },
+            zoomConfig: {
+              zoomOnClick: true,
+              zoomFactor: 0.8,
+            },
             data: {
               'USA': {fillKey: 'lt50' },
               'MEX': {fillKey: 'lt25' },
@@ -146,6 +150,13 @@ MapVis.prototype.updateVis = function(){
               'BLZ': {fillKey: 'pink' },
               'GRL': {fillKey: 'eq0' },
               'CAN': {fillKey: 'gt50' }       
+            },
+            done: function(datamap) {
+               datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+
+               function redraw() {
+                    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+               }
             },
             arcConfig: {
               strokeColor: '#DD1C77',
@@ -219,6 +230,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
         $("#startdate").val('01/01/2014')
     }
     date_start = new Date(date_start.slice(6) + '-' + date_start.slice(0, 2) + '-' + date_start.slice(3, 5))
+    date_start = new Date(date_start.getTime() + 1000*60*60*6);
     d3.select('.begin-date').html(date_start.toDateString());
 
     var date_end = document.getElementsByName("end")[0].value
@@ -227,6 +239,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
         $("#enddate").val('04/01/2015')
     }
     date_end = new Date(date_end.slice(6) + '-' + date_end.slice(0, 2) + '-' + date_end.slice(3, 5))
+    date_end = new Date(date_end.getTime() + 1000*60*60*6);
     d3.select('.end-date').html(date_end.toDateString());
     
     var left = ($('#mapVis').width() - $('.date').width())/2;
