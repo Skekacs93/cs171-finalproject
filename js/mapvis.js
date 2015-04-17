@@ -155,7 +155,13 @@ MapVis.prototype.updateVis = function(){
         else {
             console.log(dots)
             map.bubbles(dots, {popupTemplate: function(geo, data) {
-                return '<div class="hoverinfo"><strong>' + data.person + '</strong><br>' + data.startdate + ' to ' + data.enddate + '<br>' + data.destination + '<br>' + 'Ethnicity: ' + data.ethnicity.replace('null', 'Not Specified') + '</div>'
+                if(data.ethnicity == null) {
+                    data.ethnicity = 'Not Specified'
+                }
+                if(data.religion == null) {
+                    data.religion = 'Not Specified'
+                }
+                return '<div class="hoverinfo"><strong>' + data.person + '</strong><br>' + data.startdate + ' to ' + data.enddate + '<br>' + data.destination + '<br>' + '<strong>Ethnicity: </strong>' + data.ethnicity + '<br>' + '<strong>Religion: </strong>' + data.religion + '<br>' + '<strong>Sponsored by: </strong>' + data.sponsor + '</div>'
             }})
         }
 
@@ -221,7 +227,10 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     var committee_filter = document.getElementById("filter-committee").value
 
     var country_filter = document.getElementById("filter-country").value
-    var state_filter = document.getElementById("filter-state").value
+    var state_filter = document.getElementById("filter-state").options[document.getElementById("filter-state").selectedIndex].text
+    if(state_filter != '') {
+        $("#filter-country").val('United States').trigger('chosen:updated')
+    }
 
     var viztype = document.getElementById("viztype").value;
 
@@ -255,14 +264,13 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     }
 
     data.forEach(function(d, i){
-
       var departure_date = new Date(d.departure_date)
       if (departure_date > date_start && departure_date < date_end){
         if (d.party == party_filter || party_filter == ''){
           if (d.ethnicity == ethnicity_filter || ethnicity_filter == ''){
             if (d.person == person_filter || person_filter == ''){
               if (d.destination_country == country_filter || country_filter == ''){
-                if (d.state == state_filter || state_filter == ''){
+                if (d.destination_state == state_filter || state_filter == ''){
                   if (d.religion == religion_filter || religion_filter == ''){ 
                     var committees = d.committees.replace('["', '').replace('"]', '').split('", "')
                     if (committees.indexOf(committee_filter) > -1 || committee_filter == ''){

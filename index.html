@@ -103,6 +103,10 @@
         var allData = []
         var metaData = []
 
+        $('.input-daterange').datepicker({
+            clearBtn: false,
+        }).on("changeDate", function() {$(MyEventHandler).trigger("selectionChanged") })
+
 
         var initFilters = function() {
             d3.select("#filter-member")
@@ -146,10 +150,6 @@
                     .data(metaData["religions"])
                 .enter().append("option")
                     .text(function(d) { return d });
-
-            $('.input-daterange').datepicker({
-                clearBtn: true,
-            });
 
             $("#filter-member").chosen({allow_single_deselect: true});
             $("#filter-country").chosen({allow_single_deselect: true});
