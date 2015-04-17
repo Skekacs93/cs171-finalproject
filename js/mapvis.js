@@ -73,6 +73,10 @@ MapVis.prototype.updateVis = function(){
         var map = new Datamap({
             scope: 'world',
             element: document.getElementById('mapVis'),
+            geographyConfig: {
+            highlightOnHover: true,
+            popupOnHover: true
+            },
             projection: 'equirectangular',
             fills: {
               defaultFill: "#ABDDA4",
@@ -89,12 +93,27 @@ MapVis.prototype.updateVis = function(){
               'BLZ': {fillKey: 'pink' },
               'GRL': {fillKey: 'eq0' },
               'CAN': {fillKey: 'gt50' }       
+            },
+            arcConfig: {
+              strokeColor: '#DD1C77',
+              strokeWidth: 1,
+              arcSharpness: 1,
+              greatArc: true,
+              animationSpeed: 2000,
+              popupTemplate:function(){
+                return '<div class="hoverinfo"> HITHERE </div>'
+              }
             }
         });
 
         map.graticule();
 
         map.arc(arcs, {
+            popupOnHover: true,
+            highlightOnHover: true,
+            popupTemplate: function(data) {
+                return '<div class="hoverinfo">Yield:' + 'Exploded on ' + ' by the'+ ''
+            },
             greatArc: true,
             animationSpeed: 2000
         });
@@ -173,9 +192,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
             }]
     var that = this;
     data = that.data;
-    console.log("FILTERING DATA")
     var arcs = []
-    console.log(date_start)
 
     data.forEach(function(d, i){
 
