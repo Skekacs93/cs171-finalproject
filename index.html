@@ -27,6 +27,7 @@
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
 
     <script src = "js/mapvis.js"></script>
+    <script src = "js/tablevis.js"></script>
     <script src = "js/chosen.jquery.min.js"></script>
     <script src = "js/bootstrap-datepicker.js"></script>
 
@@ -50,7 +51,7 @@
             </div>
         </div>
         <div class="col col-md-2">
-            <div id="filters" class="body" onchange='console.log("HI");'>
+            <div id="filters" class="body">
                 <div class="filters-header"> Select Visualization </div>
                 <select style="margin-top: 10px; margin-bottom: 10px" class="select" id="viztype">
                     <option value="arcs">Arcs</option>
@@ -97,8 +98,8 @@
         A BUNCH OF SWEET GRAPHS AWESOME
         </div>
     </div>
-    <div class="row" id="table-row">
-        <div class="col col-md-12" id="table">
+    <div class="row" id="table-row" >
+        <div class="col col-md-12" style="padding: 0px;" id="tableVis">
         
         </div>
     </div>
@@ -106,13 +107,14 @@
     <script>
     $(function(){ // called after HTML is fully loaded
 
-        $(".select").change(function() { $(MyEventHandler).trigger("selectionChanged"); })
+        $(".select").change(function() { $(MyEventHandler).trigger("selectionChanged") });
+
         var allData = []
         var metaData = []
 
         $('.input-daterange').datepicker({
             clearBtn: false,
-        }).on("changeDate", function() {$(MyEventHandler).trigger("selectionChanged") })
+        }).on("changeDate", function() {$(MyEventHandler).trigger("selectionChanged"); })
 
 
         var initFilters = function() {
@@ -177,10 +179,9 @@
             MyEventHandler = new Object();
 
             map_vis = new MapVis(d3.select("#mapVis"), allData, metaData, MyEventHandler);
+            table_vis = new TableVis(d3.select("#tableVis"), allData, metaData)
 
-            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange();});
-
-        }
+            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); });        }
 
         var dataLoaded = function(error, _allData, _metaData){
             if(!error){

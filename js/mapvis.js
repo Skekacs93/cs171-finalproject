@@ -273,10 +273,6 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     color_map = {'party': {'R': 'red', 'D': 'blue'}}
     ethmap = d3.scale.category20().domain(this.metaData["ethnicities"])
     relmap = d3.scale.category20c().domain(this.metaData["religions"])
-    for (var i = 0; i < this.metaData["religions"].length; i++) {
-        l = this.metaData["religions"][i]
-        console.log(l.replace('/','').replace(' ','').replace(' ','').replace(' ','').replace('-','') + ":" + ethmap(l) + ",")
-    };
     arcs = [{
             origin: {
                 latitude: 61,
@@ -289,13 +285,14 @@ MapVis.prototype.filterAndAggregate = function(_filter){
             }]
     var that = this;
     data = that.data;
-    console.log("FILTERING DATA")
     if(viztype == "arcs") {
         var arcs = []
     }
     else {
         var dots = []
     }
+
+    filtered_data = []
 
     data.forEach(function(d, i){
       var departure_date = new Date(d.departure_date)
@@ -310,6 +307,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
                     if (committees.indexOf(committee_filter) > -1 || committee_filter == ''){
                       var sponsors = d.sponsor.replace('["', '').replace('"]', '').split('", "')
                       if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
+                        filtered_data.push(d)
                         if(color_by == 'none') {
                             color = '#9467bd'
                         }
@@ -364,11 +362,6 @@ MapVis.prototype.filterAndAggregate = function(_filter){
       }
 
     })
-    console.log(arcs.length)
-    // create an array of values for age 0-100
-    var res = d3.range(16).map(function () {
-        return [0, 0, 0];
-    });
     if(viztype == "arcs") {
         return arcs;
     }
