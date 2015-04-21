@@ -33,6 +33,7 @@
 
 </head>
 <body>
+    <input id="changed" type="text" name="changed" style="display:none"></input>
     <div class="row" style="width: 96%;">
         <div id="title-row">
             <h1 class="title"> Analyzing Congressional Travel Data from 2007-Present <span class="authors"> by Steven Kekacs, Robert Doles, and Kunal Mehta </span> </h1>
@@ -108,6 +109,7 @@
     $(function(){ // called after HTML is fully loaded
 
         $(".select").change(function() { $(MyEventHandler).trigger("selectionChanged") });
+        $("#changed").change(function() { $(MyEventHandler).trigger("selectionChanged") });
 
         var allData = []
         var metaData = []
@@ -115,6 +117,8 @@
         $('.input-daterange').datepicker({
             clearBtn: false,
         }).on("changeDate", function() {$(MyEventHandler).trigger("selectionChanged"); })
+
+        $(".input-daterange").change(function() {$(MyEventHandler).trigger("selectionChanged"); })
 
 
         var initFilters = function() {
@@ -179,7 +183,7 @@
             MyEventHandler = new Object();
 
             map_vis = new MapVis(d3.select("#mapVis"), allData, metaData, MyEventHandler);
-            table_vis = new TableVis(d3.select("#tableVis"), allData, metaData)
+            table_vis = new TableVis(d3.select("#tableVis"), allData, metaData, MyEventHandler)
 
             $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); });        }
 

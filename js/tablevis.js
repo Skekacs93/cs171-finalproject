@@ -19,9 +19,10 @@
  * @param _metaData -- the meta-data / data description object
  * @constructor
  */
-TableVis = function(_parentElement, _data, _metaData){
+TableVis = function(_parentElement, _data, _metaData, _eventHandler){
     this.parentElement = _parentElement;
     this.data = _data;
+    this.eventHandler = _eventHandler;
     this.metaData = _metaData;
     this.displayData = [];
     var that = this;
@@ -67,7 +68,7 @@ TableVis.prototype.updateVis = function(){
     // var options = _options || {};
     d3.selectAll('.table').remove()
     var that = this;
-    var columns = ['Member', 'Destination', 'Dates', 'Sponsor']
+    var columns = ['Member', 'Destination', 'Dates', 'Sponsor', 'Country']
     var table = this.parentElement.append("table").attr("class", "table travel-table table-striped table-condensed table-hover"),
         thead = table.append("thead")
                      .attr("class", "thead");
@@ -77,6 +78,7 @@ TableVis.prototype.updateVis = function(){
           .enter()
             .append("th")
             .text(function(d) { return d; })
+            .attr("class", function(d) {return d; })
     var rows = tbody.selectAll("tr.row")
         .data(that.displayData)
         .enter()
@@ -87,15 +89,54 @@ TableVis.prototype.updateVis = function(){
             row_condensed = []
             row_condensed.push(row['person'])
             row_condensed.push(row['destination'])
-            row_condensed.push(row['departure_date'] + ' to ' + row['return_date'])
+
+            dep_date = new Date(row['departure_date'])
+            dep_date_string = (dep_date.getMonth() + 1) + '/' + dep_date.getDate() + '/' +  dep_date.getFullYear()
+
+            ret_date = new Date(row['return_date'])
+            ret_date_string = (ret_date.getMonth() + 1) + '/' + ret_date.getDate() + '/' +  ret_date.getFullYear()
+
+            row_condensed.push(dep_date_string + ' to ' + ret_date_string)
             row_condensed.push(row['sponsor'].replace('["', '').replace('"]', '').split('", "').join())
-            return row_condensed
+            row_condensed.push(row['destination_country'])
+            return d3.range(columns.length).map(function(column, i) {
+                return [row_condensed[i], columns[i]]
+            });
         })
         .enter()
         .append("td")
         .text(function(d) {
-           return d
+            return d[0]
         })
+        .attr("class", function(d) {
+            return d[1]
+        })
+        .attr("style", "cursor: pointer")
+
+    $("td.Dates").click(function() { 
+        dates = $(this).html().split(' to ');
+        $("#enddate").datepicker('update',dates[1])
+        $("#startdate").datepicker('update',dates[0])
+     });
+
+    $("td.Destination").click(function() {
+        val = $(this).next().next().next().html()
+        $("#filter-country").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
+    $("td.Sponsor").click(function() {
+        val = $(this).html()
+        $("#filter-sponsor").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
+    $("td.Member").click(function() {
+        val = $(this).html()
+        $("#filter-member").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
 
     // TODO: implement...
     // TODO: ...update scales

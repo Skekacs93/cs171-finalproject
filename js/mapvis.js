@@ -264,6 +264,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
     var state_filter = document.getElementById("filter-state").options[document.getElementById("filter-state").selectedIndex].text
     if(state_filter != '') {
         $("#filter-country").val('United States').trigger('chosen:updated')
+        $("#changed").val('hi')
     }
 
     var viztype = document.getElementById("viztype").value;
