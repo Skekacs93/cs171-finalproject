@@ -87,15 +87,15 @@ MapVis.prototype.updateVis = function(){
             projection: 'equirectangular',
             fills: {
                 defaultFill: "#ABDDA4",
-                bub: '#9467bd',
+                bub: 'grey',
                 HawaiianPacificIslander: '#aec7e8',
                 Other: '#ff7f0e',
                 WhiteCaucasian:'#ffbb78',
                 IndianNativeAmerican:'#2ca02c',
-                BlackAfricanAmerican:'#98df8a',
+                BlackAfricanAmerican:'#9467bd',
                 AsianPacificAmerican:'#d62728',
                 HispanicLatino:'#ff9896',
-                TwoorMoreEthnicities:'#9467bd',
+                TwoorMoreEthnicities:'#98df8a',
                 R: 'red',
                 D: 'blue',
                 Catholic:'#c5b0d5',
@@ -310,7 +310,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
                       if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
                         filtered_data.push(d)
                         if(color_by == 'none') {
-                            color = '#9467bd'
+                            color = 'grey'
                         }
                         else if(color_by == "party") {
                             color = color_map[color_by][d[color_by]]

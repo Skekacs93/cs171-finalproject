@@ -27,6 +27,8 @@
     <link rel="stylesheet" type="text/css" href="css/myStyle.css">
 
     <script src = "js/mapvis.js"></script>
+    <script src = "js/partyHist.js"></script>
+    <script src = "js/ethhist.js"></script>
     <script src = "js/tablevis.js"></script>
     <script src = "js/listvis.js"></script>
     <script src = "js/graphvis.js"></script>
@@ -111,9 +113,15 @@
     <div class="row" id="graphs-row">
         <div class="col col-md-4" id="graphVis">
         </div>
-        <div class="col col-md-4">
+        <div class="col col-md-2" id="partyHist">
         </div>
-        <div class="col col-md-4">
+        <div class="col col-md-6" id="ethHist">
+            <div style="position: absolute; right: 0px; top: -10px;z-index: 100; " class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default">Ethnicity</button>
+              <button type="button" class="btn btn-default">Religion</button>
+            </div>
+        </div>
+        <div class="col col-md-6" id="relHist" style="display:none">
         </div>
     </div>
     <div class="row" id="table-row" >
@@ -203,8 +211,11 @@
             table_vis = new TableVis(d3.select("#tableVis"), allData, metaData, MyEventHandler)
             list_vis = new ListVis(d3.select("#update-lists"), allData, metaData, MyEventHandler)
             graph_vis = new GraphVis(d3.select("#graphVis"), allData, metaData, MyEventHandler)
+            party_hist = new PartyHist(d3.select("#partyHist"), allData, metaData, MyEventHandler)
+            eth_hist = new EthHist(d3.select("#ethHist"), allData, metaData, MyEventHandler)
 
-            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); list_vis.onSelectionChange(); graph_vis.onSelectionChange(); });        }
+
+            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); list_vis.onSelectionChange(); graph_vis.onSelectionChange(); party_hist.onSelectionChange(); eth_hist.onSelectionChange(); });        }
 
         var dataLoaded = function(error, _allData, _metaData){
             if(!error){

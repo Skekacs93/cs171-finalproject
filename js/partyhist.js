@@ -13,33 +13,35 @@
  * */
 
 /**
- * AgeVis object for HW3 of CS171
+ * PrioVis object for HW3 of CS171
  * @param _parentElement -- the HTML or SVG element (D3 node) to which to attach the vis
  * @param _data -- the data array
  * @param _metaData -- the meta-data / data description object
  * @constructor
  */
-GraphVis = function(_parentElement, _data, _metaData, _eventHandler){
+PartyHist = function(_parentElement, _data, _metaData){
     this.parentElement = _parentElement;
     this.data = _data;
     this.metaData = _metaData;
-    this.eventHandler = _eventHandler;
     this.displayData = [];
 
     var that = this;
 
-    // TODO: define all "constants" here
+
+
+    // TODO: define all constants here
     this.width = getInnerWidth(this.parentElement);
     this.height = 190;
-    
-    this.topheight = 10; //start of the top of the graph
-    this.innerheight = 160; //height of the graph
-    this.innerwidthstart = 30; //how far in the graph starts
-    this.outerwidth = this.width - 10;
 
-    // TODO: implement update graphs (D3: update, enter, exit)
-    this.x = d3.time.scale().range([this.innerwidthstart, this.outerwidth]),
-    this.y = d3.scale.linear().range([this.innerheight, this.topheight]);
+    this.innerwidth = 100;
+    this.outerwidth = this.width - 100;
+    this.topheight = 10;
+    this.outerheight = 160;
+
+    this.linewidth = 3
+
+    this.y = d3.scale.linear().range([this.topheight, this.outerheight]);
+    this.x = d3.scale.ordinal().rangeRoundBands([this.innerwidth, this.outerwidth], .1);
 
     this.xAxis = d3.svg.axis()
       .scale(this.x)
@@ -49,11 +51,6 @@ GraphVis = function(_parentElement, _data, _metaData, _eventHandler){
       .scale(this.y)
       .orient("left");
 
-    this.area = d3.svg.area()
-      .x(function(d) { return that.x(d.key)})
-      .y0(that.innerheight)
-      .y1(function(d) { l1 = that.y(d.values); return l1; })
-
     this.initVis();
 
 }
@@ -62,32 +59,27 @@ GraphVis = function(_parentElement, _data, _metaData, _eventHandler){
 /**
  * Method that sets up the SVG and the variables
  */
-GraphVis.prototype.initVis = function(){
+PartyHist.prototype.initVis = function(){
 
     var that = this; // read about the this
 
-    //TODO: implement here all things that don't change
-    //TODO: implement here all things that need an initial status
-    // Examples are:
-    // - construct SVG layout
-    // - create axis
-    // -  implement brushing !!
-    // --- ONLY FOR BONUS ---  implement zooming
 
-    // TODO: modify this to append an svg element, not modify the current placeholder SVG element
+    //TODO: construct or select SVG
+    //TODO: create axis and scales
+
     this.svg = this.parentElement.append("svg")
                 .attr("height", this.height)
                 .attr("width", this.width)
-
+    
     // Add axes visual elements
-    this.svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + this.innerheight + ")")
 
     this.svg.append("g")
         .attr("class", "y axis")
-        .attr("transform", "translate(" + this.innerwidthstart + ",0)")
+        .attr("transform", "translate(" + this.innerwidth + ",0)")
 
+    this.svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + this.outerheight + ")")
 
     // filter, aggregate, modify data
     this.wrangleData(null);
@@ -96,48 +88,65 @@ GraphVis.prototype.initVis = function(){
     this.updateVis();
 }
 
-GraphVis.prototype.wrangleData= function(_filterFunction){
+
+/**
+ * Method to wrangle the data. In this case it takes an options object
+ * @param _filterFunction - a function that filters data or "null" if none
+ */
+PartyHist.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
+
+    //// you might be able to pass some options,
+    //// if you don't pass options -- set the default options
+    //// the default is: var options = {filter: function(){return true;} }
+    //var options = _options || {filter: function(){return true;}};
+
+
+
 
 
 }
 
 
+
 /**
  * the drawing function - should use the D3 selection, enter, exit
  */
-GraphVis.prototype.updateVis = function(){
+PartyHist.prototype.updateVis = function(){
 
     var that = this;
 
-    time_aggregated = this.displayData['time_aggregated']
+    this.y.domain([d3.max(this.displayData, function(i) { return i.values}) , 0]);
 
-    this.x.domain(d3.extent(time_aggregated, function(d) { return d.key; }));
-    this.y.domain(d3.extent(time_aggregated, function(d) { return d.values; }));
+    this.x.domain(this.displayData.map(function(d,i) { return d.key }))
 
-    // updates axis
+    var barWidth = this.outerwidth / this.displayData.length;
+
+    d3.selectAll(".text").remove();
+
     this.svg.select(".x.axis")
-        .call(this.xAxis);
+        .call(this.xAxis)
 
     this.svg.select(".y.axis")
         .call(this.yAxis)
 
-    // updates graph
-    var path = this.svg.selectAll(".area")
-       .data([time_aggregated])
+    this.svg.selectAll(".bar").remove();
 
-    path.enter()
-       .append("path")
-       .attr("class", "area")
+    var barchart = this.svg.selectAll(".bar")
+        .data(this.displayData)
 
-    path
-    //    //.transition()
-        .attr("d", that.area );
+    cmap = {'R': 'red', 'D': 'blue'}
 
-    path.exit()
-       .remove();
+    barchart.enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d,i) { return that.x(d.key); } )
+        .attr("y", function(d) { return that.y(d.values) } )
+        .attr("height", function(d) { return that.outerheight - that.y(d.values); } )
+        .attr("width", this.x.rangeBand() )
+        .attr("fill", function(d,i) { return cmap[d.key]; });
+
 }
 
 
@@ -147,15 +156,31 @@ GraphVis.prototype.updateVis = function(){
  * be defined here.
  * @param selection
  */
-GraphVis.prototype.onSelectionChange= function (){
+PartyHist.prototype.onSelectionChange= function (selectionStart, selectionEnd){
 
     this.wrangleData(null);
 
     this.updateVis();
 
+
 }
 
-GraphVis.prototype.filterAndAggregate = function(_filter){
+
+/*
+*
+* ==================================
+* From here on only HELPER functions
+* ==================================
+*
+* */
+
+
+/**
+ * The aggregate function that creates the counts for each age for a given filter.
+ * @param _filter - A filter can be, e.g.,  a function that is only true for data of a given time range
+ * @returns {Array|*}
+ */
+PartyHist.prototype.filterAndAggregate = function(_filter){
     // Set filter to a function that accepts all items
     // ONLY if the parameter _filter is NOT null use this parameter
     var filter = function(){return true;}
@@ -241,32 +266,12 @@ GraphVis.prototype.filterAndAggregate = function(_filter){
       }
     })
 
-    alldata = {'alldata': filtered_data}
-
-    var time_aggregated = d3.nest()
-        .key(function(d) {return d.departure_date })
-        .rollup(function(d) {
-            return d3.sum(d, function(g) {return 1; });
-        }).entries(filtered_data);
-    time_aggregated.sort(function(a,b) { return b.values - a.values })
-
-    for (var i = 0; i < time_aggregated.length; i++) {
-        time_aggregated[i].key = new Date(time_aggregated[i].key)
-    };
-
-    alldata['time_aggregated'] = time_aggregated
 
     var party_aggregated = d3.nest()
         .key(function(d) {return d.party })
         .rollup(function(d) {
             return d3.sum(d, function(g) {return 1; });
         }).entries(filtered_data);
-    party_aggregated.sort(function(a,b) { return b.values - a.values })
 
-    alldata['party_aggregated'] = party_aggregated
-
-    return alldata
+    return party_aggregated
 }
-
-
-
