@@ -19,7 +19,7 @@
  * @param _metaData -- the meta-data / data description object
  * @constructor
  */
-TableVis = function(_parentElement, _data, _metaData, _eventHandler){
+ListVis = function(_parentElement, _data, _metaData, _eventHandler){
     this.parentElement = _parentElement;
     this.data = _data;
     this.eventHandler = _eventHandler;
@@ -40,7 +40,7 @@ TableVis = function(_parentElement, _data, _metaData, _eventHandler){
 /**
  * Method that sets up the SVG and the variables
  */
-TableVis.prototype.initVis = function(){
+ListVis.prototype.initVis = function(){
 
     this.wrangleData(null);
 
@@ -48,7 +48,7 @@ TableVis.prototype.initVis = function(){
     this.updateVis();
 }
 
-TableVis.prototype.wrangleData= function(_filterFunction){
+ListVis.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
@@ -60,16 +60,12 @@ TableVis.prototype.wrangleData= function(_filterFunction){
 /**
  * the drawing function - should use the D3 selection, enter, exit
  */
-TableVis.prototype.updateVis = function(){
+ListVis.prototype.updateVis = function(){
 
-    // Dear JS hipster,
-    // you might be able to pass some options as parameter _option
-    // But it's not needed to solve the task.
-    // var options = _options || {};
-    d3.selectAll('.travel-table').remove()
+    d3.selectAll('.list-table').remove()
     var that = this;
-    var columns = ['Member', 'Destination', 'Dates', 'Sponsor', 'Country']
-    var table = this.parentElement.append("table").attr("class", "table travel-table table-striped table-condensed table-hover"),
+    var columns = ['Destination Country', 'Trips']
+    var table = d3.select("#country-list").append("table").attr("class", "table list-table table-striped table-condensed table-hover").attr("style","height: 150px; overflow-y: scroll"),
         thead = table.append("thead")
                      .attr("class", "thead");
         tbody = table.append("tbody");
@@ -78,27 +74,16 @@ TableVis.prototype.updateVis = function(){
           .enter()
             .append("th")
             .text(function(d) { return d; })
-            .attr("class", function(d) {return d; })
     var rows = tbody.selectAll("tr.row")
-        .data(that.displayData)
+        .data(that.displayData['country_aggregated'])
         .enter()
         .append("tr");
 
     var cells = rows.selectAll("td")
        .data(function(row) {
             row_condensed = []
-            row_condensed.push(row['person'])
-            row_condensed.push(row['destination'])
-
-            dep_date = new Date(row['departure_date'])
-            dep_date_string = (dep_date.getMonth() + 1) + '/' + dep_date.getDate() + '/' +  dep_date.getFullYear()
-
-            ret_date = new Date(row['return_date'])
-            ret_date_string = (ret_date.getMonth() + 1) + '/' + ret_date.getDate() + '/' +  ret_date.getFullYear()
-
-            row_condensed.push(dep_date_string + ' to ' + ret_date_string)
-            row_condensed.push(row['sponsor'].replace('["', '').replace('"]', '').split('", "').join())
-            row_condensed.push(row['destination_country'])
+            row_condensed.push(row['key'])
+            row_condensed.push(row['values'])
             return d3.range(columns.length).map(function(column, i) {
                 return [row_condensed[i], columns[i]]
             });
@@ -109,38 +94,77 @@ TableVis.prototype.updateVis = function(){
             return d[0]
         })
         .attr("class", function(d) {
-            return d[1]
+            return d[1].replace(' ','')
         })
         .attr("style", "cursor: pointer")
 
-    $("td.Dates").click(function() { 
-        dates = $(this).html().split(' to ');
-        $("#enddate").datepicker('update',dates[1])
-        $("#startdate").datepicker('update',dates[0])
-     });
+    var columns = ['Trip Sponsor', 'Trips']
+    var table = d3.select("#sponsors-list").append("table").attr("class", "table list-table table-striped table-condensed table-hover").attr("style","height: 150px; overflow-y: scroll"),
+        thead = table.append("thead")
+                     .attr("class", "thead");
+        tbody = table.append("tbody");
+    thead.append("tr").selectAll("th")
+            .data(columns)
+          .enter()
+            .append("th")
+            .text(function(d) { return d; })
+    var rows = tbody.selectAll("tr.row")
+        .data(that.displayData['sponsor_aggregated'])
+        .enter()
+        .append("tr");
 
-    $("td.Destination").click(function() {
-        val = $(this).next().next().next().html()
-        $("#filter-country").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
+    var cells = rows.selectAll("td")
+       .data(function(row) {
+            row_condensed = []
+            row_condensed.push(row['key'])
+            row_condensed.push(row['values'])
+            return d3.range(columns.length).map(function(column, i) {
+                return [row_condensed[i], columns[i]]
+            });
+        })
+        .enter()
+        .append("td")
+        .text(function(d) {
+            return d[0]
+        })
+        .attr("class", function(d) {
+            return d[1].replace(' ','')
+        })
+        .attr("style", "cursor: pointer")
 
-    $("td.Sponsor").click(function() {
-        val = $(this).html()
-        $("#filter-sponsor").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
+    var columns = ['Congress Member', 'Trips']
+    var table = d3.select("#members-list").append("table").attr("class", "table list-table table-striped table-condensed table-hover").attr("style","height: 150px; overflow-y: scroll"),
+        thead = table.append("thead")
+                     .attr("class", "thead");
+        tbody = table.append("tbody");
+    thead.append("tr").selectAll("th")
+            .data(columns)
+          .enter()
+            .append("th")
+            .text(function(d) { return d; })
+    var rows = tbody.selectAll("tr.row")
+        .data(that.displayData['member_aggregated'])
+        .enter()
+        .append("tr");
 
-    $("td.Member").click(function() {
-        val = $(this).html()
-        $("#filter-member").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
-
-
-    // TODO: implement...
-    // TODO: ...update scales
-    // TODO: ...update graphs
+    var cells = rows.selectAll("td")
+       .data(function(row) {
+            row_condensed = []
+            row_condensed.push(row['key'])
+            row_condensed.push(row['values'])
+            return d3.range(columns.length).map(function(column, i) {
+                return [row_condensed[i], columns[i]]
+            });
+        })
+        .enter()
+        .append("td")
+        .text(function(d) {
+            return d[0]
+        })
+        .attr("class", function(d) {
+            return d[1].replace(' ','')
+        })
+        .attr("style", "cursor: pointer")
 
 }
 
@@ -151,7 +175,7 @@ TableVis.prototype.updateVis = function(){
  * be defined here.
  * @param selection
  */
-TableVis.prototype.onSelectionChange= function (){
+ListVis.prototype.onSelectionChange= function (){
 
     this.wrangleData(null);
 
@@ -160,7 +184,7 @@ TableVis.prototype.onSelectionChange= function (){
 
 }
 
-TableVis.prototype.filterAndAggregate = function(_filter){
+ListVis.prototype.filterAndAggregate = function(_filter){
     // Set filter to a function that accepts all items
     // ONLY if the parameter _filter is NOT null use this parameter
     var filter = function(){return true;}
@@ -235,6 +259,11 @@ TableVis.prototype.filterAndAggregate = function(_filter){
 
     filtered_data = []
 
+    sponsors_dict = {}
+    for (var i = 0; i < this.metaData['sponsors'].length; i++) {
+        sponsors_dict[this.metaData['sponsors'][i]] = 0
+    };
+
     data.forEach(function(d, i){
       var departure_date = new Date(d.departure_date)
       if (departure_date > date_start && departure_date < date_end){
@@ -249,6 +278,9 @@ TableVis.prototype.filterAndAggregate = function(_filter){
                       var sponsors = d.sponsor.replace('["', '').replace('"]', '').split('", "')
                       if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
                         filtered_data.push(d)
+                        for (var i = 0; i < sponsors.length; i++) {
+                            sponsors_dict[sponsors[i]] += 1;
+                        };
                       }
                     }
                   }
@@ -260,7 +292,34 @@ TableVis.prototype.filterAndAggregate = function(_filter){
       }
     })
 
-    return filtered_data
+    alldata = {'alldata': filtered_data}
+
+    var country_aggregated = d3.nest()
+        .key(function(d) {return d.destination_country })
+        .rollup(function(d) {
+            return d3.sum(d, function(g) {return 1; });
+        }).entries(filtered_data);
+    country_aggregated.sort(function(a,b) { return b.values - a.values })
+    alldata['country_aggregated'] = country_aggregated
+
+    sponsors_data = []
+    sponsor_keys = Object.keys(sponsors_dict)
+    for (var i = 0; i < sponsor_keys.length; i++) {
+        sponsors_data.push({key: sponsor_keys[i], values: sponsors_dict[sponsor_keys[i]] })
+    };
+    sponsors_data = sponsors_data.filter(function(d) {return d.values > 0 });
+
+    var member_aggregated = d3.nest()
+        .key(function(d) {return d.person })
+        .rollup(function(d) {
+            return d3.sum(d, function(g) {return 1; });
+        }).entries(filtered_data);
+    member_aggregated.sort(function(a,b) { return b.values - a.values })
+    alldata['member_aggregated'] = member_aggregated
+
+    sponsors_data.sort(function(a,b) { return b.values - a.values })
+    alldata['sponsor_aggregated'] = sponsors_data
+    return alldata
 }
 
 

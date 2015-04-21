@@ -42,10 +42,10 @@
     overflow-y: scroll;
     width: 97.2%;
     margin-left: 25px;
+    margin-top: 25px;
 }
 
 #update-lists {
-    background-color:green;
     width: 110%;
     margin-left: -10px;
 }

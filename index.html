@@ -28,6 +28,7 @@
 
     <script src = "js/mapvis.js"></script>
     <script src = "js/tablevis.js"></script>
+    <script src = "js/listvis.js"></script>
     <script src = "js/chosen.jquery.min.js"></script>
     <script src = "js/bootstrap-datepicker.js"></script>
 
@@ -42,8 +43,19 @@
     </div>
     <div class="row" id="body-row">
         <div class="col col-md-2">
-            <div id="update-lists" class="body">
-            A BUNCH OF LISTS BLAH BLAH BLAH
+            <div id="update-lists" style="height: 564px;" class="body">
+                <div class="filters-header"> Top Countries </div>
+                <div id="country-list" style="height: 150px; overflow-y: scroll;">
+
+                </div>
+                <div class="filters-header"> Top Sponsors </div>
+                <div id="sponsors-list" style="height: 150px; overflow-y: scroll;">
+                    
+                </div>
+                <div class="filters-header"> Top Members </div>
+                <div id="members-list" style="height: 150px; overflow-y: scroll;">
+                    
+                </div>
             </div>
         </div>
         <div class="col col-md-8">
@@ -184,8 +196,9 @@
 
             map_vis = new MapVis(d3.select("#mapVis"), allData, metaData, MyEventHandler);
             table_vis = new TableVis(d3.select("#tableVis"), allData, metaData, MyEventHandler)
+            list_vis = new ListVis(d3.select("#update-lists"), allData, metaData, MyEventHandler)
 
-            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); });        }
+            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); list_vis.onSelectionChange(); });        }
 
         var dataLoaded = function(error, _allData, _metaData){
             if(!error){
