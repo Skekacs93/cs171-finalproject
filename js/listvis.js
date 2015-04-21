@@ -166,6 +166,24 @@ ListVis.prototype.updateVis = function(){
         })
         .attr("style", "cursor: pointer")
 
+    $("td.CongressMember").click(function() {
+        val = $(this).html()
+        $("#filter-member").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
+    $("td.TripSponsor").click(function() {
+        val = $(this).html()
+        $("#filter-sponsor").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
+    $("td.DestinationCountry").click(function() {
+        val = $(this).html()
+        $("#filter-country").val(val).trigger('chosen:updated')
+        $("#changed").change();
+    })
+
 }
 
 
