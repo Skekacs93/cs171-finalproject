@@ -19,7 +19,7 @@
  * @param _metaData -- the meta-data / data description object
  * @constructor
  */
-EthHist = function(_parentElement, _data, _metaData){
+RelHist = function(_parentElement, _data, _metaData){
     this.parentElement = _parentElement;
     this.data = _data;
     this.metaData = _metaData;
@@ -30,8 +30,8 @@ EthHist = function(_parentElement, _data, _metaData){
 
 
     // TODO: define all constants here
-    this.width = getInnerWidth(this.parentElement);
-    this.height = 190;
+    this.width = getInnerWidth(d3.select("#ethHist"));
+    this.height = 240;
 
     this.innerwidth = 50;
     this.outerwidth = this.width - 10;
@@ -59,7 +59,7 @@ EthHist = function(_parentElement, _data, _metaData){
 /**
  * Method that sets up the SVG and the variables
  */
-EthHist.prototype.initVis = function(){
+RelHist.prototype.initVis = function(){
 
     var that = this; // read about the this
 
@@ -93,7 +93,7 @@ EthHist.prototype.initVis = function(){
  * Method to wrangle the data. In this case it takes an options object
  * @param _filterFunction - a function that filters data or "null" if none
  */
-EthHist.prototype.wrangleData= function(_filterFunction){
+RelHist.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
@@ -114,15 +114,14 @@ EthHist.prototype.wrangleData= function(_filterFunction){
 /**
  * the drawing function - should use the D3 selection, enter, exit
  */
-EthHist.prototype.updateVis = function(){
+RelHist.prototype.updateVis = function(){
 
     var that = this;
 
     this.y.domain([d3.max(this.displayData, function(i) { return i.values}) , 0]);
     hi = []
     function shorten_names(key) {
-        dict = {"White/Caucasian": "White", "Asian/Pacific American": "Asian", "Hispanic/Latino":"Hispanic", "Black/African American":"African American", "Indian/Native American":"Native American", "Other":"Other", "Hawaiian/Pacific Islander":"Hawaiian", "Two or More Ethnicities":"Multiple"}
-        return dict[key];
+        return key;
     }
 
     this.x.domain(this.displayData.map(function(d,i) { return shorten_names(d.key) }))
@@ -131,18 +130,10 @@ EthHist.prototype.updateVis = function(){
 
     d3.selectAll(".text").remove();
 
-    this.svg.select(".x.axis")
-        .call(this.xAxis)
-
-    this.svg.select(".y.axis")
-        .call(this.yAxis)
-
     this.svg.selectAll(".bar").remove();
 
     var barchart = this.svg.selectAll(".bar")
         .data(this.displayData)
-
-    cmap = {'Hawaiian/Pacific Islander': '#aec7e8', 'Other': '#ff7f0e', 'White/Caucasian':'#ffbb78', 'Indian/Native American':'#2ca02c', 'Black/African American':'#9467bd', 'Asian/Pacific American':'#d62728', 'Hispanic/Latino':'#ff9896', 'Two or More Ethnicities':'#98df8a'}
 
     barchart.enter().append("rect")
         .attr("class", "bar")
@@ -150,7 +141,22 @@ EthHist.prototype.updateVis = function(){
         .attr("y", function(d) { return that.y(d.values) } )
         .attr("height", function(d) { return that.outerheight - that.y(d.values); } )
         .attr("width", this.x.rangeBand() )
-        .attr("fill", function(d,i) { return cmap[d.key]; });
+        .attr("fill", function(d,i) { return 'blue'; })
+        .attr("opacity", 0.5);
+
+
+    this.svg.select(".x.axis")
+        .call(this.xAxis)
+        .selectAll("text")
+            .style("text-anchor", "start")
+            .attr("dx", ".8em")
+            .attr("dy", "-0.3em")
+            .attr("transform", function(d) {
+                return "rotate(-90)" 
+            });
+
+    this.svg.select(".y.axis")
+        .call(this.yAxis)
 
 }
 
@@ -161,7 +167,7 @@ EthHist.prototype.updateVis = function(){
  * be defined here.
  * @param selection
  */
-EthHist.prototype.onSelectionChange= function (selectionStart, selectionEnd){
+RelHist.prototype.onSelectionChange= function (selectionStart, selectionEnd){
 
     this.wrangleData(null);
 
@@ -185,7 +191,7 @@ EthHist.prototype.onSelectionChange= function (selectionStart, selectionEnd){
  * @param _filter - A filter can be, e.g.,  a function that is only true for data of a given time range
  * @returns {Array|*}
  */
-EthHist.prototype.filterAndAggregate = function(_filter){
+RelHist.prototype.filterAndAggregate = function(_filter){
     // Set filter to a function that accepts all items
     // ONLY if the parameter _filter is NOT null use this parameter
     var filter = function(){return true;}
@@ -264,13 +270,13 @@ EthHist.prototype.filterAndAggregate = function(_filter){
     })
 
 
-    var ethnicity_aggregated = d3.nest()
-        .key(function(d) {return d.ethnicity })
+    var religion_aggregated = d3.nest()
+        .key(function(d) {return d.religion })
         .rollup(function(d) {
             return d3.sum(d, function(g) {return 1; });
         }).entries(filtered_data);
 
-    ethnicity_aggregated = ethnicity_aggregated.filter(function(i) {return i.key != 'null' })
+    religion_aggregated = religion_aggregated.filter(function(i) {return i.key != 'null' })
 
-    return ethnicity_aggregated
+    return religion_aggregated
 }

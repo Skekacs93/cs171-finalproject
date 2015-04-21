@@ -126,7 +126,8 @@ TableVis.prototype.updateVis = function(){
     })
 
     $("td.Sponsor").click(function() {
-        val = $(this).html()
+        val = $(this).html().split(',')[0]
+        console.log(val)
         $("#filter-sponsor").val(val).trigger('chosen:updated')
         $("#changed").change();
     })
