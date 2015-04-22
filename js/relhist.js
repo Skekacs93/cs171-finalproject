@@ -13,24 +13,43 @@
  * */
 
 /**
- * AgeVis object for HW3 of CS171
+ * PrioVis object for HW3 of CS171
  * @param _parentElement -- the HTML or SVG element (D3 node) to which to attach the vis
  * @param _data -- the data array
  * @param _metaData -- the meta-data / data description object
  * @constructor
  */
-TableVis = function(_parentElement, _data, _metaData, _eventHandler){
+RelHist = function(_parentElement, _data, _metaData){
     this.parentElement = _parentElement;
     this.data = _data;
-    this.eventHandler = _eventHandler;
     this.metaData = _metaData;
     this.displayData = [];
+
     var that = this;
 
 
 
     // TODO: define all constants here
-    this.width = getInnerWidth(this.parentElement);
+    this.width = getInnerWidth(d3.select("#ethHist"));
+    this.height = 240;
+
+    this.innerwidth = 50;
+    this.outerwidth = this.width - 10;
+    this.topheight = 10;
+    this.outerheight = 160;
+
+    this.linewidth = 3
+
+    this.y = d3.scale.linear().range([this.topheight, this.outerheight]);
+    this.x = d3.scale.ordinal().rangeRoundBands([this.innerwidth, this.outerwidth], .1);
+
+    this.xAxis = d3.svg.axis()
+      .scale(this.x)
+      .orient("bottom");
+
+    this.yAxis = d3.svg.axis()
+      .scale(this.y)
+      .orient("left");
 
     this.initVis();
 
@@ -40,108 +59,104 @@ TableVis = function(_parentElement, _data, _metaData, _eventHandler){
 /**
  * Method that sets up the SVG and the variables
  */
-TableVis.prototype.initVis = function(){
+RelHist.prototype.initVis = function(){
 
+    var that = this; // read about the this
+
+
+    //TODO: construct or select SVG
+    //TODO: create axis and scales
+
+    this.svg = this.parentElement.append("svg")
+                .attr("height", this.height)
+                .attr("width", this.width)
+    
+    // Add axes visual elements
+
+    this.svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + this.innerwidth + ",0)")
+
+    this.svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + this.outerheight + ")")
+
+    // filter, aggregate, modify data
     this.wrangleData(null);
 
     // call the update method
     this.updateVis();
 }
 
-TableVis.prototype.wrangleData= function(_filterFunction){
+
+/**
+ * Method to wrangle the data. In this case it takes an options object
+ * @param _filterFunction - a function that filters data or "null" if none
+ */
+RelHist.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
+
+    //// you might be able to pass some options,
+    //// if you don't pass options -- set the default options
+    //// the default is: var options = {filter: function(){return true;} }
+    //var options = _options || {filter: function(){return true;}};
+
+
+
 
 
 }
 
 
+
 /**
  * the drawing function - should use the D3 selection, enter, exit
  */
-TableVis.prototype.updateVis = function(){
+RelHist.prototype.updateVis = function(){
 
-    // Dear JS hipster,
-    // you might be able to pass some options as parameter _option
-    // But it's not needed to solve the task.
-    // var options = _options || {};
-    d3.selectAll('.travel-table').remove()
     var that = this;
-    var columns = ['Member', 'Destination', 'Dates', 'Sponsor', 'Country']
-    var table = this.parentElement.append("table").attr("class", "table travel-table table-striped table-condensed table-hover"),
-        thead = table.append("thead")
-                     .attr("class", "thead");
-        tbody = table.append("tbody");
-    thead.append("tr").selectAll("th")
-            .data(columns)
-          .enter()
-            .append("th")
-            .text(function(d) { return d; })
-            .attr("class", function(d) {return d; })
-    var rows = tbody.selectAll("tr.row")
-        .data(that.displayData)
-        .enter()
-        .append("tr");
 
-    var cells = rows.selectAll("td")
-       .data(function(row) {
-            row_condensed = []
-            row_condensed.push(row['person'])
-            row_condensed.push(row['destination'])
+    this.y.domain([d3.max(this.displayData, function(i) { return i.values}) , 0]);
+    hi = []
+    function shorten_names(key) {
+        return key;
+    }
 
-            dep_date = new Date(row['departure_date'])
-            dep_date_string = (dep_date.getMonth() + 1) + '/' + dep_date.getDate() + '/' +  dep_date.getFullYear()
+    this.x.domain(this.displayData.map(function(d,i) { return shorten_names(d.key) }))
 
-            ret_date = new Date(row['return_date'])
-            ret_date_string = (ret_date.getMonth() + 1) + '/' + ret_date.getDate() + '/' +  ret_date.getFullYear()
+    var barWidth = this.outerwidth / this.displayData.length;
 
-            row_condensed.push(dep_date_string + ' to ' + ret_date_string)
-            row_condensed.push(row['sponsor'].replace('["', '').replace('"]', '').split('", "').join())
-            row_condensed.push(row['destination_country'])
-            return d3.range(columns.length).map(function(column, i) {
-                return [row_condensed[i], columns[i]]
+    d3.selectAll(".text").remove();
+
+    this.svg.selectAll(".bar").remove();
+
+    var barchart = this.svg.selectAll(".bar")
+        .data(this.displayData)
+
+    barchart.enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d,i) { return that.x(shorten_names(d.key)); } )
+        .attr("y", function(d) { return that.y(d.values) } )
+        .attr("height", function(d) { return that.outerheight - that.y(d.values); } )
+        .attr("width", this.x.rangeBand() )
+        .attr("fill", function(d,i) { return 'blue'; })
+        .attr("opacity", 0.5);
+
+
+    this.svg.select(".x.axis")
+        .call(this.xAxis)
+        .selectAll("text")
+            .style("text-anchor", "start")
+            .attr("dx", ".8em")
+            .attr("dy", "-0.3em")
+            .attr("transform", function(d) {
+                return "rotate(-90)" 
             });
-        })
-        .enter()
-        .append("td")
-        .text(function(d) {
-            return d[0]
-        })
-        .attr("class", function(d) {
-            return d[1]
-        })
-        .attr("style", "cursor: pointer")
 
-    $("td.Dates").click(function() { 
-        dates = $(this).html().split(' to ');
-        $("#enddate").datepicker('update',dates[1])
-        $("#startdate").datepicker('update',dates[0])
-     });
-
-    $("td.Destination").click(function() {
-        val = $(this).next().next().next().html()
-        $("#filter-country").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
-
-    $("td.Sponsor").click(function() {
-        val = $(this).html().split(',')[0]
-        console.log(val)
-        $("#filter-sponsor").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
-
-    $("td.Member").click(function() {
-        val = $(this).html()
-        $("#filter-member").val(val).trigger('chosen:updated')
-        $("#changed").change();
-    })
-
-
-    // TODO: implement...
-    // TODO: ...update scales
-    // TODO: ...update graphs
+    this.svg.select(".y.axis")
+        .call(this.yAxis)
 
 }
 
@@ -152,7 +167,7 @@ TableVis.prototype.updateVis = function(){
  * be defined here.
  * @param selection
  */
-TableVis.prototype.onSelectionChange= function (){
+RelHist.prototype.onSelectionChange= function (selectionStart, selectionEnd){
 
     this.wrangleData(null);
 
@@ -161,7 +176,22 @@ TableVis.prototype.onSelectionChange= function (){
 
 }
 
-TableVis.prototype.filterAndAggregate = function(_filter){
+
+/*
+*
+* ==================================
+* From here on only HELPER functions
+* ==================================
+*
+* */
+
+
+/**
+ * The aggregate function that creates the counts for each age for a given filter.
+ * @param _filter - A filter can be, e.g.,  a function that is only true for data of a given time range
+ * @returns {Array|*}
+ */
+RelHist.prototype.filterAndAggregate = function(_filter){
     // Set filter to a function that accepts all items
     // ONLY if the parameter _filter is NOT null use this parameter
     var filter = function(){return true;}
@@ -179,7 +209,6 @@ TableVis.prototype.filterAndAggregate = function(_filter){
     }
     date_start = new Date(date_start.slice(6) + '-' + date_start.slice(0, 2) + '-' + date_start.slice(3, 5))
     date_start = new Date(date_start.getTime() + 1000*60*60*6);
-    d3.select('.begin-date').html(date_start.toDateString());
 
     var date_end = document.getElementsByName("end")[0].value
     if (date_end == ''){
@@ -188,11 +217,7 @@ TableVis.prototype.filterAndAggregate = function(_filter){
     }
     date_end = new Date(date_end.slice(6) + '-' + date_end.slice(0, 2) + '-' + date_end.slice(3, 5))
     date_end = new Date(date_end.getTime() + 1000*60*60*6);
-    d3.select('.end-date').html(date_end.toDateString());
     
-    var left = ($('#mapVis').width() - $('.date').width())/2;
-    d3.select('.date').style('left', String(left)+'px');
-    d3.select('.date').style('display', 'inline');
     // define party filter
     var party_filter = document.getElementById("filter-party").value
     party_filter = party_filter.replace("Republican", "R").replace("Democrat", "D")
@@ -214,23 +239,6 @@ TableVis.prototype.filterAndAggregate = function(_filter){
         $("#filter-country").val('United States').trigger('chosen:updated')
     }
 
-    var viztype = document.getElementById("viztype").value;
-
-    //coloring
-    var color_by = document.getElementById("color-by").value
-    color_map = {'party': {'R': 'red', 'D': 'blue'}}
-    ethmap = d3.scale.category20().domain(this.metaData["ethnicities"])
-    relmap = d3.scale.category20c().domain(this.metaData["religions"])
-    arcs = [{
-            origin: {
-                latitude: 61,
-                longitude: -149
-            },
-            destination: {
-                latitude: -22,
-                longitude: -43
-            }
-            }]
     var that = this;
     data = that.data;
 
@@ -261,8 +269,14 @@ TableVis.prototype.filterAndAggregate = function(_filter){
       }
     })
 
-    return filtered_data
+
+    var religion_aggregated = d3.nest()
+        .key(function(d) {return d.religion })
+        .rollup(function(d) {
+            return d3.sum(d, function(g) {return 1; });
+        }).entries(filtered_data);
+
+    religion_aggregated = religion_aggregated.filter(function(i) {return i.key != 'null' })
+
+    return religion_aggregated
 }
-
-
-
