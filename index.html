@@ -96,7 +96,7 @@
                     <input id="enddate" type="text" class="input-sm form-control" name="end" />
                 </div>
                 <div class="filters-header"> Color Travel </div>
-                <select data-placeholder="Color by Party" id = "color-by" class="select">
+                <select data-placeholder="Color by" id = "color-by" class="select">
                     <option value="none"></option>
                     <option value="ethnicity">Ethnicity</option>
                     <option value="party">Party</option>
@@ -153,11 +153,6 @@
             d3.select("#filter-country")
                 .selectAll("option")
                     .data(metaData["countries"])
-                .enter().append("option")
-                    .text(function(d) { return d });
-            d3.select("#filter-committee")
-                .selectAll("option")
-                    .data(metaData["committees"])
                 .enter().append("option")
                     .text(function(d) { return d });
             d3.select("#filter-committee")
