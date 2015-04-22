@@ -116,18 +116,25 @@ EthHist.prototype.wrangleData= function(_filterFunction){
  */
 EthHist.prototype.updateVis = function(){
 
+    var cmap = {'Hawaiian/Pacific Islander': '#aec7e8', 'Other': '#ff7f0e', 'White/Caucasian':'#ffbb78', 'Indian/Native American':'#2ca02c', 'Black/African American':'#9467bd', 'Asian/Pacific American':'#d62728', 'Hispanic/Latino':'#ff9896', 'Two or More Ethnicities':'#98df8a'}
+
     var that = this;
 
     this.y.domain([d3.max(this.displayData, function(i) { return i.values}) , 0]);
-    hi = []
+
     function shorten_names(key) {
         dict = {"White/Caucasian": "White", "Asian/Pacific American": "Asian", "Hispanic/Latino":"Hispanic", "Black/African American":"African American", "Indian/Native American":"Native American", "Other":"Other", "Hawaiian/Pacific Islander":"Hawaiian", "Two or More Ethnicities":"Multiple"}
         return dict[key];
     }
 
-    this.x.domain(this.displayData.map(function(d,i) { return shorten_names(d.key) }))
+    xdom = []
+    for (var i = 0; i < Object.keys(cmap).length; i++) {
+        xdom.push(shorten_names(Object.keys(cmap)[i]))
+    };
 
-    var barWidth = this.outerwidth / this.displayData.length;
+    this.x.domain(xdom)
+
+    var barWidth = this.outerwidth / xdom.length;
 
     d3.selectAll(".text").remove();
 
@@ -141,8 +148,6 @@ EthHist.prototype.updateVis = function(){
 
     var barchart = this.svg.selectAll(".bar")
         .data(this.displayData)
-
-    cmap = {'Hawaiian/Pacific Islander': '#aec7e8', 'Other': '#ff7f0e', 'White/Caucasian':'#ffbb78', 'Indian/Native American':'#2ca02c', 'Black/African American':'#9467bd', 'Asian/Pacific American':'#d62728', 'Hispanic/Latino':'#ff9896', 'Two or More Ethnicities':'#98df8a'}
 
     barchart.enter().append("rect")
         .attr("class", "bar")

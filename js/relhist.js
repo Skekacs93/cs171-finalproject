@@ -126,10 +126,14 @@ RelHist.prototype.updateVis = function(){
 
     cmap = {'Catholic':'#c5b0d5', 'Episcopalian':'#8c564b', 'Greek Orthodox':'#c49c94', 'Unitarian':'#e377c2', 'African Methodist Episcopal':'#f7b6d2', 'Hinduism':'#7f7f7f', 'Jewish':'#c7c7c7', 'Mormon':'#bcbd22', 'Christian Reformed Church':'#dbdb8d','Seventh-Day Adventist':'#17becf', 'Roman Catholic':'#9edae5', 'Islam':'#1f77b4', 'Disciples of Christ':'#aec7e8','Evangelical':'#ff7f0e', 'Baptist':'#ffbb78', 'Anglican Catholic':'#2ca02c', 'Christian Church':'#98df8a', 'Nazarene':'#d62728', 'Protestant - UnspecifiedChristian':'#ff9896', 'Congregationalist':'#9467bd', 'Methodist':'#c5b0d5', 'Buddhism':'#8c564b', 'United Church of Christ':'#c49c94', 'Christian Scientist':'#e377c2', 'Southern Baptist':'#f7b6d2', 'Eastern Orthodox':'#7f7f7f', 'Lutheran':'#c7c7c7', 'Assembly of God':'#bcbd22', 'Presbyterian':'#dbdb8d', 'ChurchofChrist':'#17becf', 'Pentecostal':'#9edae5'}
 
+    xdom = []
+    for (var i = 0; i < Object.keys(cmap).length; i++) {
+        xdom.push(shorten_names(Object.keys(cmap)[i]))
+    };
 
-    this.x.domain(this.displayData.map(function(d,i) { return shorten_names(d.key) }))
+    this.x.domain(xdom)
 
-    var barWidth = this.outerwidth / this.displayData.length;
+    var barWidth = this.outerwidth / xdom.length;
 
     d3.selectAll(".text").remove();
 
