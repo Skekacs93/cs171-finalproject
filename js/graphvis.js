@@ -39,20 +39,16 @@ GraphVis = function(_parentElement, _data, _metaData, _eventHandler){
 
     // TODO: implement update graphs (D3: update, enter, exit)
     this.x = d3.time.scale().range([this.innerwidthstart, this.outerwidth]),
-    this.y = d3.scale.linear().range([this.innerheight, this.topheight]);
+    this.x2 = d3.time.scale().rangeRound([this.innerwidthstart, this.outerwidth]),
+    this.y = d3.scale.linear().range([this.innerheight, this.topheight ]);
 
     this.xAxis = d3.svg.axis()
-      .scale(this.x)
+      .scale(this.x2)
       .orient("bottom");
 
     this.yAxis = d3.svg.axis()
       .scale(this.y)
       .orient("left");
-
-    this.area = d3.svg.area()
-      .x(function(d) { return that.x(d.key)})
-      .y0(that.innerheight)
-      .y1(function(d) { l1 = that.y(d.values); return l1; })
 
     this.initVis();
 
@@ -112,9 +108,15 @@ GraphVis.prototype.updateVis = function(){
 
     var that = this;
 
+    // add the tooltip area to the webpage
+    var tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     time_aggregated = this.displayData['time_aggregated']
 
-    this.x.domain(d3.extent(time_aggregated, function(d) { return d.key; }));
+    this.x2.domain(d3.extent(time_aggregated, function(d) { return d.key; }));
+    this.x.domain([0, time_aggregated.length - 1])
     this.y.domain(d3.extent(time_aggregated, function(d) { return d.values; }));
 
     // updates axis
@@ -124,20 +126,34 @@ GraphVis.prototype.updateVis = function(){
     this.svg.select(".y.axis")
         .call(this.yAxis)
 
-    // updates graph
-    var path = this.svg.selectAll(".area")
-       .data([time_aggregated])
+    
+    this.svg.selectAll(".dot").remove()    
 
-    path.enter()
-       .append("path")
-       .attr("class", "area")
-
-    path
-    //    //.transition()
-        .attr("d", that.area );
-
-    path.exit()
-       .remove();
+    this.svg.selectAll(".dot")
+      .data(time_aggregated)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", function(d) { return that.x2(d.key) })
+      .attr("cy", function(d) { return that.y(d.values) })
+      .style("fill", 'blue')
+      .style("cursor", "pointer")
+      .on("mouseover", function(d) {
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", 1);
+          tooltip.html((d.key.getMonth() + 1) + "-" + d.key.getDate() + "-" + d.key.getFullYear() + '<br>' + d.values.toString() + ' trips')
+               .style("left", (d3.event.pageX + 5) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      })
+      .on("click", function(d) {
+        console.log(d.key)
+      }); 
 }
 
 
@@ -248,7 +264,7 @@ GraphVis.prototype.filterAndAggregate = function(_filter){
         .rollup(function(d) {
             return d3.sum(d, function(g) {return 1; });
         }).entries(filtered_data);
-    time_aggregated.sort(function(a,b) { return b.values - a.values })
+    time_aggregated.sort(function(a,b) { return b.key - a.key })
 
     for (var i = 0; i < time_aggregated.length; i++) {
         time_aggregated[i].key = new Date(time_aggregated[i].key)
