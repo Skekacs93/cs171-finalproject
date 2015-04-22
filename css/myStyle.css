@@ -100,3 +100,8 @@
 .Country {
     display: none;
 }
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
