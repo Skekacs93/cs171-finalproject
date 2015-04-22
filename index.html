@@ -201,11 +201,6 @@
                     .data(metaData["committees"])
                 .enter().append("option")
                     .text(function(d) { return d });
-            d3.select("#filter-committee")
-                .selectAll("option")
-                    .data(metaData["committees"])
-                .enter().append("option")
-                    .text(function(d) { return d });
             d3.select("#filter-ethnicity")
                 .selectAll("option")
                     .data(metaData["ethnicities"])
