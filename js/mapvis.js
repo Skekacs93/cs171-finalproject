@@ -137,10 +137,6 @@ MapVis.prototype.updateVis = function(){
                 popupOnHover: false,
                 highlightOnHover: false,
             },
-            zoomConfig: {
-              zoomOnClick: true,
-              zoomFactor: 0.8,
-            },
             data: {
               'USA': {fillKey: 'lt50' },
               'MEX': {fillKey: 'lt25' },
@@ -150,13 +146,6 @@ MapVis.prototype.updateVis = function(){
               'BLZ': {fillKey: 'pink' },
               'GRL': {fillKey: 'eq0' },
               'CAN': {fillKey: 'gt50' }       
-            },
-            done: function(datamap) {
-               datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
-
-               function redraw() {
-                    datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-               }
             },
             arcConfig: {
               strokeColor: '#DD1C77',
