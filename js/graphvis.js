@@ -136,7 +136,7 @@ GraphVis.prototype.updateVis = function(){
       .attr("r", 3.5)
       .attr("cx", function(d) { return that.x2(d.key) })
       .attr("cy", function(d) { return that.y(d.values) })
-      .style("fill", 'blue')
+      .style("fill", 'green')
       .style("cursor", "pointer")
       .on("mouseover", function(d) {
           tooltip.transition()
@@ -152,7 +152,12 @@ GraphVis.prototype.updateVis = function(){
                .style("opacity", 0);
       })
       .on("click", function(d) {
-        console.log(d.key)
+        t = new Date(d.key.getTime() + 24*60*60*1000)
+        startdate = (d.key.getMonth() + 1).toString() + '/' + d.key.getDate().toString() + '/' + d.key.getFullYear().toString()
+        enddate = (t.getMonth() + 1).toString() + '/' + t.getDate().toString() + '/' + t.getFullYear().toString()
+        $("#enddate").datepicker('update',enddate)
+        $("#startdate").datepicker('update',startdate)
+        $("#changed").change()
       }); 
 }
 

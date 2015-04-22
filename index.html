@@ -39,13 +39,36 @@
 
 </head>
 <body>
-    <input id="changed" type="text" name="changed" style="display:none"></input>
-    <div class="row" style="width: 96%;">
-        <div id="title-row">
-            <h1 class="title"> Analyzing Congressional Travel Data from 2007-Present <span class="authors"> by Steven Kekacs, Robert Doles, and Kunal Mehta </span> </h1>
-            <h3 class="subtitle"> Can analyzing where congressmen travel give insights to what is important to them? </h3>
+    <nav class="navbar navbar-inverse" style="color: white; font-size: 44px;">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-header navbar-left">
+            <li style="color: white;"><a style="color: white;" href="#">Congressional Travel Analysis</a></li>
+            <li style="color: white;"><a style="color: #6754a6;" href="https://www.quorum.us">Powered by Quorum</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-header navbar-right">
+            <li style="color: white;"><a style="color: white;" href="#" data-toggle="modal" data-target="#myModal">About</a></li>
+        </ul>
+
+      </div>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h1 class="modal-title" id="myModalLabel">About this Project</h1>
+          </div>
+          <div class="modal-body" style="font-size: 24px;">
+            This project was created by Robert Doles, Steven Kekacs and Kunal Mehta for Computer Science 171 at Harvard College.  In 2007, both chambers of Congress changed their rules so that all privately funded travel must be approved by the House or Senate. Members of congress are required to disclose data of any privately funded travel (both domestically and abroad) that they undertook while in office that was sponsored by a third party. This data is easily publicly available for the H​ouse​. Analyzing this data can provide valuable insights into which third parties have closest relationships with certain members, where certain members travel the most, and if and when members traveled together. The project is motivated because the students working on the project are affiliated with <a href = "https:/www.quorum.us">Quorum</a>, a student startup based out of Cambridge that provides data analytics for politics. As such, we will have access to a large database with existing data about congressmen which we will integrate with this travel data to make it searchable, filterable and cleaner.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
         </div>
+      </div>
     </div>
+    <input id="changed" type="text" name="changed" style="display:none"></input>
     <div class="row" id="body-row">
         <div class="col col-md-2">
             <div id="update-lists" style="height: 564px;" class="body">
@@ -64,7 +87,7 @@
             </div>
         </div>
         <div class="col col-md-8">
-            <span class="date" style="display:none;"><span class="begin-date">1st Date</span> to <span class="end-date">2nd Date</span></span>
+            <!-- <span class="date" style="display:none;"><span class="begin-date">1st Date</span> to <span class="end-date">2nd Date</span></span> -->
             <div  id="mapVis" class="body">
             </div>
         </div>

@@ -31,7 +31,7 @@ RelHist = function(_parentElement, _data, _metaData){
 
     // TODO: define all constants here
     this.width = getInnerWidth(d3.select("#ethHist"));
-    this.height = 240;
+    this.height = 190;
 
     this.innerwidth = 50;
     this.outerwidth = this.width - 10;
@@ -124,6 +124,9 @@ RelHist.prototype.updateVis = function(){
         return key;
     }
 
+    cmap = {'Catholic':'#c5b0d5', 'Episcopalian':'#8c564b', 'Greek Orthodox':'#c49c94', 'Unitarian':'#e377c2', 'African Methodist Episcopal':'#f7b6d2', 'Hinduism':'#7f7f7f', 'Jewish':'#c7c7c7', 'Mormon':'#bcbd22', 'Christian Reformed Church':'#dbdb8d','Seventh-Day Adventist':'#17becf', 'Roman Catholic':'#9edae5', 'Islam':'#1f77b4', 'Disciples of Christ':'#aec7e8','Evangelical':'#ff7f0e', 'Baptist':'#ffbb78', 'Anglican Catholic':'#2ca02c', 'Christian Church':'#98df8a', 'Nazarene':'#d62728', 'Protestant - UnspecifiedChristian':'#ff9896', 'Congregationalist':'#9467bd', 'Methodist':'#c5b0d5', 'Buddhism':'#8c564b', 'United Church of Christ':'#c49c94', 'Christian Scientist':'#e377c2', 'Southern Baptist':'#f7b6d2', 'Eastern Orthodox':'#7f7f7f', 'Lutheran':'#c7c7c7', 'Assembly of God':'#bcbd22', 'Presbyterian':'#dbdb8d', 'ChurchofChrist':'#17becf', 'Pentecostal':'#9edae5'}
+
+
     this.x.domain(this.displayData.map(function(d,i) { return shorten_names(d.key) }))
 
     var barWidth = this.outerwidth / this.displayData.length;
@@ -141,7 +144,7 @@ RelHist.prototype.updateVis = function(){
         .attr("y", function(d) { return that.y(d.values) } )
         .attr("height", function(d) { return that.outerheight - that.y(d.values); } )
         .attr("width", this.x.rangeBand() )
-        .attr("fill", function(d,i) { return 'blue'; })
+        .attr("fill", function(d,i) { return cmap[d.key]; })
         .attr("opacity", 0.5);
 
 
