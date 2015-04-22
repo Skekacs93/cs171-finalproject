@@ -87,7 +87,7 @@ MapVis.prototype.updateVis = function(){
             projection: 'equirectangular',
             fills: {
                 defaultFill: "#ABDDA4",
-                bub: 'grey',
+                bub: '#8A2BE2',
                 HawaiianPacificIslander: '#aec7e8',
                 Other: '#ff7f0e',
                 WhiteCaucasian:'#ffbb78',
@@ -310,7 +310,7 @@ MapVis.prototype.filterAndAggregate = function(_filter){
                       if (sponsors.indexOf(sponsor_filter) > -1 || sponsor_filter == ''){
                         filtered_data.push(d)
                         if(color_by == 'none') {
-                            color = 'grey'
+                            color = '#8A2BE2'
                         }
                         else if(color_by == "party") {
                             color = color_map[color_by][d[color_by]]

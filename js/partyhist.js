@@ -120,7 +120,7 @@ PartyHist.prototype.updateVis = function(){
 
     this.y.domain([d3.max(this.displayData, function(i) { return i.values}) , 0]);
 
-    this.x.domain(this.displayData.map(function(d,i) { return d.key }))
+    this.x.domain(['R','D'])
 
     var barWidth = this.outerwidth / this.displayData.length;
 
