@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Congressional Travel Visualization: CS171</title>
 
     <script src="libs/d3/d3.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/queue.v1.min.js"></script>
@@ -40,8 +40,29 @@
 </head>
 <body>
     <div id="landing" style = "position: fixed; z-index: 500; background:white; height: 100%; width: 100%">
-        <h1 style="text-align: center; margin-top: 20%;">Congressional Travel Visualization</h1>
-        <h1 id="startviz" style="display: none; text-align: center; color: blue; cursor: pointer;">Start Visualization</h1>
+        <div class = "row">
+            <div class = "col-md-12">
+                <h1 style="text-align: center; margin-top: 2%;">Congressional Travel Visualization:</h1>
+                <h2 style="text-align: center;">Can analyzing where Members of Congress Travel provide insights into their priorities?</h2>
+            </div>
+        </div>
+
+        <div class = "row" style="margin-top: 5%;">
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/robert.jpg"></img>
+                <h3 class="text-center">Robert Doles</h3>
+            </div>
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/steve.jpg"></img>
+                <h3 class="text-center">Steve Kekacs</h3>
+            </div>
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/kunal.jpg"></img>
+                <h3 class="text-center">Kunal Mehta</h3>
+            </div>
+        </div>
+        <h3 style="text-align: center; margin-top: 5%">A project for Computer Science 171 at Harvard College</h3>
+        <button id="startviz" style="display: none; text-align: center; color: white; background-color:#3d3262; border-radius: 2px; width: 400px; height: 100px; display: block; margin: 0 auto; vertical-align: middle; height: cursor: pointer; font-size: 40px; margin-top: 20px;">Start Visualization</button>
     </div>
     <nav class="navbar navbar-inverse" style="color: white; font-size: 44px;">
       <div class="container-fluid">
@@ -253,7 +274,7 @@
                 metaData = _metaData
                 initFilters();
                 initVis();
-                $("#startviz").show()
+                $("#startviz").fadeIn()
                 $("#startviz").click(function() { $("#landing").hide() })
             }
         }
