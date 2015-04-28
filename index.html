@@ -115,6 +115,10 @@
             <!-- <span class="date" style="display:none;"><span class="begin-date">1st Date</span> to <span class="end-date">2nd Date</span></span> -->
             <div  id="mapVis" class="body">
             </div>
+            <div style="left: 740px;top: -19px;" class="btn-group" role="group" aria-label="...">
+              <button type="button" id="ethHistbtn" class="btn btn-default active">Ethnicity</button>
+              <button type="button" id="relHistbtn" class="btn btn-default">Religion</button>
+            </div>
         </div>
         <div class="col col-md-2">
             <div id="filters" class="body">
@@ -155,18 +159,13 @@
                     <option value="party">Party</option>
                     <option value="religion">Religion</option>
                 </select>
-
+                </div>
             </div>
-        </div>
     </div>
     <div class="row" id="graphs-row">
         <div class="col col-md-4" id="graphVis">
         </div>
         <div class="col col-md-2" id="partyHist">
-            <div style="position: absolute; right: -280%; top: -10px;z-index: 100; " class="btn-group" role="group" aria-label="...">
-              <button type="button" id="ethHistbtn" class="btn btn-default">Ethnicity</button>
-              <button type="button" id="relHistbtn" class="btn btn-default">Religion</button>
-            </div>
         </div>
         <div class="col col-md-6" id="ethHist">
         </div>

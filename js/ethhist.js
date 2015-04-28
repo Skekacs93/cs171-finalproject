@@ -31,7 +31,7 @@ EthHist = function(_parentElement, _data, _metaData){
 
     // TODO: define all constants here
     this.width = getInnerWidth(this.parentElement);
-    this.height = 190;
+    this.height = 230;
 
     this.innerwidth = 50;
     this.outerwidth = this.width - 10;
@@ -156,6 +156,12 @@ EthHist.prototype.updateVis = function(){
         .attr("height", function(d) { return that.outerheight - that.y(d.values); } )
         .attr("width", this.x.rangeBand() )
         .attr("fill", function(d,i) { return cmap[d.key]; });
+
+    d3.select('#ethHist').select('.x.axis').selectAll('text')
+        .style('text-anchor', 'inherit')
+        .attr("transform", function(d) {
+                return "rotate(30)" 
+            });
 
 }
 

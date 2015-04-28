@@ -29,8 +29,8 @@ GraphVis = function(_parentElement, _data, _metaData, _eventHandler){
     var that = this;
 
     // TODO: define all "constants" here
-    this.width = getInnerWidth(this.parentElement);
-    this.height = 190;
+    this.width = getInnerWidth(this.parentElement) - 30;
+    this.height = 230;
     
     this.topheight = 10; //start of the top of the graph
     this.innerheight = 160; //height of the graph
@@ -73,7 +73,7 @@ GraphVis.prototype.initVis = function(){
     // TODO: modify this to append an svg element, not modify the current placeholder SVG element
     this.svg = this.parentElement.append("svg")
                 .attr("height", this.height)
-                .attr("width", this.width)
+                .attr("width", this.width+30)
 
     // Add axes visual elements
     this.svg.append("g")
@@ -159,6 +159,12 @@ GraphVis.prototype.updateVis = function(){
         $("#startdate").datepicker('update',startdate)
         $("#changed").change()
       }); 
+
+    d3.select('#graphVis').select('.x.axis').selectAll('text')
+        .style('text-anchor', 'inherit')
+        .attr("transform", function(d) {
+                return "rotate(30)" 
+            });
 }
 
 
