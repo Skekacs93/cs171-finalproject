@@ -52,8 +52,6 @@ TableVis.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
-
-
 }
 
 
@@ -61,7 +59,6 @@ TableVis.prototype.wrangleData= function(_filterFunction){
  * the drawing function - should use the D3 selection, enter, exit
  */
 TableVis.prototype.updateVis = function(){
-
     // Dear JS hipster,
     // you might be able to pass some options as parameter _option
     // But it's not needed to solve the task.
