@@ -101,7 +101,7 @@
             <h1 class="modal-title" id="myModalLabel">About this Project</h1>
           </div>
           <div class="modal-body" style="font-size: 24px;">
-            This project was created by Robert Doles, Steven Kekacs and Kunal Mehta for Computer Science 171 at Harvard College.  In 2007, both chambers of Congress changed their rules so that all privately funded travel must be approved by the House or Senate. Members of congress are required to disclose data of any privately funded travel (both domestically and abroad) that they undertook while in office that was sponsored by a third party. This data is easily publicly available for the H​ouse​. Analyzing this data can provide valuable insights into which third parties have closest relationships with certain members, where certain members travel the most, and if and when members traveled together. The project is motivated because the students working on the project are affiliated with <a href = "https:/www.quorum.us">Quorum</a>, a student startup based out of Cambridge that provides data analytics for politics. As such, we will have access to a large database with existing data about congressmen which we will integrate with this travel data to make it searchable, filterable and cleaner.
+            This project was created by Robert Doles, Steven Kekacs and Kunal Mehta for Computer Science 171 at Harvard College.  In 2007, both chambers of Congress changed their rules so that all privately funded travel must be approved by the House or Senate. Members of congress are required to disclose data of any privately funded travel (both domestically and abroad) that they undertook while in office that was sponsored by a third party. This data is easily publicly available for the H​ouse​. Analyzing this data can provide valuable insights into which third parties have closest relationships with certain members, where certain members travel the most, and if and when members traveled together. The project is motivated because the students working on the project are affiliated with <a tagert = "_blank" href = "https:/www.quorum.us">Quorum</a>, a student startup based out of Cambridge that provides data analytics for politics. As such, we will have access to a large database with existing data about congressmen which we will integrate with this travel data to make it searchable, filterable and cleaner.
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -117,11 +117,11 @@
                 <div id="country-list" style="height: 150px; overflow-y: scroll;">
 
                 </div>
-                <div class="filters-header"> Top Sponsors </div>
+                <div class="filters-header" style="margin-top: 15px;"> Top Sponsors </div>
                 <div id="sponsors-list" style="height: 150px; overflow-y: scroll;">
                 </div>
-                <div class="filters-header"> Top Members </div>
-                <div id="members-list" style="height: 150px; overflow-y: scroll; border-color: black; border-width:10px">
+                <div class="filters-header" style="margin-top: 15px;"> Top Members </div>
+                <div id="members-list" style="height: 150px; overflow-y: scroll;">
                     
                 </div>
             </div>
@@ -130,9 +130,13 @@
             <!-- <span class="date" style="display:none;"><span class="begin-date">1st Date</span> to <span class="end-date">2nd Date</span></span> -->
             <div  id="mapVis" class="body">
             </div>
-            <div style="left: 740px;top: -19px;" class="btn-group" role="group" aria-label="...">
+            <div style="left: 100%;top: 50px; z-index: 400;" class="btn-group" role="group" aria-label="...">
               <button type="button" id="ethHistbtn" class="btn btn-default active">Ethnicity</button>
               <button type="button" id="relHistbtn" class="btn btn-default">Religion</button>
+            </div>
+
+            <div style="left: 80%;top: -19px;" class="btn-group" role="group" aria-label="...">
+              <button type="button" id="resetbtn" class="btn btn-primary">Reset Dates</button>
             </div>
         </div>
         <div class="col col-md-2">
@@ -179,12 +183,16 @@
     </div>
     <div class="row" id="graphs-row">
         <div class="col col-md-4" id="graphVis">
+            <h3 style="text-decoration: underline;">Number of Trips by Day</h3>
         </div>
         <div class="col col-md-2" id="partyHist">
+            <h3 style="text-decoration: underline;">Number of Trips by Party</h3>
         </div>
         <div class="col col-md-6" id="ethHist">
+            <h3 style="text-decoration: underline;">Number of Trips by Ethnicity</h3>
         </div>
         <div class="col col-md-6" id="relHist" style="display:none">
+            <h3 style="text-decoration: underline;">Number of Trips by Religion</h3>
         </div>
     </div>
     <div class="row" id="table-row" >
@@ -213,7 +221,9 @@
         $(".btn").click(function() { $('.btn').each(function() {$(this).removeClass('active')}); $(this).addClass('active')});
         $("#ethHistbtn").click(function() { $("#relHist").hide(); $("#ethHist").show() });
         $("#relHistbtn").click(function() { $("#ethHist").hide(); $("#relHist").show() });
-
+        
+        $("#resetbtn").click(function() { $("#startdate").val('01/01/2014'); $("#enddate").val('04/01/2015'); $(MyEventHandler).trigger("selectionChanged"); });
+        
         var allData = []
         var metaData = []
 
