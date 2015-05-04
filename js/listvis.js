@@ -27,9 +27,7 @@ ListVis = function(_parentElement, _data, _metaData, _eventHandler){
     this.displayData = [];
     var that = this;
 
-
-
-    // TODO: define all constants here
+    // define all constants here
     this.width = getInnerWidth(this.parentElement);
 
     this.initVis();
@@ -52,8 +50,6 @@ ListVis.prototype.wrangleData= function(_filterFunction){
 
     // displayData should hold the data which is visualized
     this.displayData = this.filterAndAggregate(_filterFunction);
-
-
 }
 
 
@@ -135,7 +131,9 @@ ListVis.prototype.updateVis = function(){
     var columns = ['Congress Member', 'Trips']
     var table = d3.select("#members-list").append("table").attr("class", "table list-table table-striped table-condensed table-hover").attr("style","height: 150px; overflow-y: scroll"),
         thead = table.append("thead")
-                     .attr("class", "thead");
+                     .attr("class", "thead")
+                     //.attr("style", "position:absolute");
+                    //relative, fixed, absolute, static, inherit
         tbody = table.append("tbody");
     thead.append("tr").selectAll("th")
             .data(columns)
