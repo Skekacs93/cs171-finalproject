@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Congressional Travel Visualization: CS171</title>
+
+    <script src="libs/d3/d3.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
+    <script src="libs/jquery/jquery-2.1.1.min.js" charset="utf-8"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="libs/topojson-js/topojson.min.js"></script>
+    <script src="libs/datamaps.all.min.js"></script>
+
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/chosen.min.css">
+    <link rel="stylesheet" type="text/css" href="css/datepicker3.css">
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />  
+
+    <!-- add own stylesheet-->
+    <link rel="stylesheet" type="text/css" href="css/myStyle.css">
+
+    <script src = "js/mapvis.js"></script>
+    <script src = "js/partyHist.js"></script>
+    <script src = "js/ethhist.js"></script>
+    <script src = "js/relhist.js"></script>
+    <script src = "js/tablevis.js"></script>
+    <script src = "js/listvis.js"></script>
+    <script src = "js/graphvis.js"></script>
+
+    <script src = "js/chosen.jquery.min.js"></script>
+    <script src = "js/bootstrap-datepicker.js"></script>
+
+</head>
+<body>
+    <div id="landing" style = "position: fixed; z-index: 500; background:white; height: 100%; width: 100%">
+     <nav class="navbar navbar-inverse" style="color: white; font-size: 44px;">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-header navbar-left">
+            <li style="color: white;"><a style="color: white;" href="#">Congressional Travel Analysis</a></li>
+            <li style="color: white;"><a style="color: #6754a6;" href="https://www.quorum.us">Powered by Quorum</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-header navbar-right">
+            <li style="color: white;"><a style="color: white; font-size: 25px" href="#" data-toggle="modal" data-target="#myModal">About</a></li>
+            <li style="color: white;"><a style="color: #6754a6; font-size: 25px" href="/CS171ProcessBook.pdf">Process Book</a></li>
+            <li style="color: white;"><a style="color: white; font-size: 25px" href="#" data-toggle="modal" data-target="#myModal">Screencast</a></li>
+        </ul>
+
+      </div>
+     </nav>
+        <div class = "row">
+            <div class = "col-md-12">
+                <h1 style="text-align: center; margin-top: 2%;">Congressional Travel Visualization:</h1>
+                <h2 style="text-align: center;">Can analyzing where Members of Congress Travel provide insights into their priorities?</h2>
+            </div>
+        </div>
+
+        <div class = "row" style="margin-top: 4%;">
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/robert.jpg"></img>
+                <h3 class="text-center">Robert Doles</h3>
+            </div>
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/steve.jpg"></img>
+                <h3 class="text-center">Steve Kekacs</h3>
+            </div>
+            <div class = "col-md-4">
+                <img style="display: block; margin: 0 auto; height: 250px; width: auto;" class="img-circle" src="css/kunal.jpg"></img>
+                <h3 class="text-center">Kunal Mehta</h3>
+            </div>
+        </div>
+        <h3 style="text-align: center; margin-top: 3%">A project for Computer Science 171 at Harvard College</h3>
+        <button id="startviz" style="display: none; text-align: center; color: white; background-color:#3d3262; border-radius: 2px; width: 400px; height: 100px; display: block; margin: 0 auto; vertical-align: middle; height: cursor: pointer; font-size: 40px; margin-top: 20px;">Start Visualization</button>
+    </div>
+    <nav class="navbar navbar-inverse" style="color: white; font-size: 44px;">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-header navbar-left">
+            <li style="color: white;"><a style="color: white;" href="#">Congressional Travel Analysis</a></li>
+            <li style="color: white;"><a style="color: #6754a6;" href="https://www.quorum.us">Powered by Quorum</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-header navbar-right">
+            <li style="color: white;"><a style="color: white; font-size: 25px" href="#" data-toggle="modal" data-target="#myModal">About</a></li>
+            <li style="color: white;"><a style="color: #6754a6; font-size: 25px" href="/CS171ProcessBook.pdf">Process Book</a></li>
+            <li style="color: white;"><a style="color: white; font-size: 25px" href="#" data-toggle="modal" data-target="#myModal">Screencast</a></li>
+        </ul>
+
+      </div>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h1 class="modal-title" id="myModalLabel">About this Project</h1>
+          </div>
+          <div class="modal-body" style="font-size: 24px;">
+            This project was created by Robert Doles, Steven Kekacs and Kunal Mehta for Computer Science 171 at Harvard College.  In 2007, both chambers of Congress changed their rules so that all privately funded travel must be approved by the House or Senate. Members of congress are required to disclose data of any privately funded travel (both domestically and abroad) that they undertook while in office that was sponsored by a third party. This data is easily publicly available for the H​ouse​. Analyzing this data can provide valuable insights into which third parties have closest relationships with certain members, where certain members travel the most, and if and when members traveled together. The project is motivated because the students working on the project are affiliated with <a href = "https:/www.quorum.us">Quorum</a>, a student startup based out of Cambridge that provides data analytics for politics. As such, we will have access to a large database with existing data about congressmen which we will integrate with this travel data to make it searchable, filterable and cleaner.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input id="changed" type="text" name="changed" style="display:none"></input>
+    <div class="row" id="body-row">
+        <div class="col col-md-2">
+            <div id="update-lists" style="height: 564px;" class="body">
+                <div class="filters-header"> Top Countries </div>
+                <div id="country-list" style="height: 150px; overflow-y: scroll;">
+
+                </div>
+                <div class="filters-header"> Top Sponsors </div>
+                <div id="sponsors-list" style="height: 150px; overflow-y: scroll;">
+                </div>
+                <div class="filters-header"> Top Members </div>
+                <div id="members-list" style="height: 150px; overflow-y: scroll; border-color: black; border-width:10px">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col col-md-8">
+            <!-- <span class="date" style="display:none;"><span class="begin-date">1st Date</span> to <span class="end-date">2nd Date</span></span> -->
+            <div  id="mapVis" class="body">
+            </div>
+            <div style="left: 740px;top: -19px;" class="btn-group" role="group" aria-label="...">
+              <button type="button" id="ethHistbtn" class="btn btn-default active">Ethnicity</button>
+              <button type="button" id="relHistbtn" class="btn btn-default">Religion</button>
+            </div>
+        </div>
+        <div class="col col-md-2">
+            <div id="filters" class="body">
+                <div class="filters-header"> Select Visualization </div>
+                <select style="margin-top: 10px; margin-bottom: 10px" class="select" id="viztype">
+                    <option value="arcs">View Trips as Paths (Large Volume Data)</option>
+                    <option value="dots">View Trips as Markers (Small Volume Data)</option>
+                </select>
+                <div class="filters-header"> Filter Travel </div>
+                <select data-placeholder="Select a Representative" id = "filter-member" class="select">
+                </select>
+                <select data-placeholder="Select a Country" id = "filter-country" class="select">
+                </select>
+                <select data-placeholder="Select a State" id = "filter-state" class="select">
+                </select>
+                <select data-placeholder="Select a Sponsor" id = "filter-sponsor" class="select">
+                </select>
+                <select data-placeholder="Filter by Party" id = "filter-party" class="select">
+                    <option value=""></option>
+                    <option value="R">Republican</option>
+                    <option value="D">Democrat</option>
+                </select>
+                <select data-placeholder="Filter by Committee" id = "filter-committee" class="select">
+                </select>
+                <select data-placeholder="Filter by Ethnicity" id = "filter-ethnicity" class="select">
+                </select>
+                <select data-placeholder="Filter by Religion" id = "filter-religion" class="select">
+                </select>
+                <div class="input-daterange input-group" id="datepicker" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input id="startdate" type="text" class="input-sm form-control" name="start" />
+                    <span class="input-group-addon">to</span>
+                    <input id="enddate" type="text" class="input-sm form-control" name="end" />
+                </div>
+                <div class="filters-header"> Color Travel </div>
+                <select data-placeholder="Color by" id = "color-by" class="select">
+                    <option value="none"></option>
+                    <option value="ethnicity">Ethnicity</option>
+                    <option value="party">Party</option>
+                    <option value="religion">Religion</option>
+                </select>
+                </div>
+            </div>
+    </div>
+    <div class="row" id="graphs-row">
+        <div class="col col-md-4" id="graphVis">
+        </div>
+        <div class="col col-md-2" id="partyHist">
+        </div>
+        <div class="col col-md-6" id="ethHist">
+        </div>
+        <div class="col col-md-6" id="relHist" style="display:none">
+        </div>
+    </div>
+    <div class="row" id="table-row" >
+<!--         <table>
+          <thead>
+            <tr>
+              <th class="Member">Member</th>
+              <th class="Destination">Destination</th>
+              <th class="Dates">Dates</th>
+              <th class="Sponsor">Sponsor</th>
+              <th class="Country">Country</th>
+            </tr>
+          </thead>
+        </table> -->
+        <div class="col col-md-12" style="padding: 0px;" id="tableVis">
+        
+        </div>
+    </div>
+
+    <script>
+    $(function(){ // called after HTML is fully loaded
+
+        $(".select").change(function() { $(MyEventHandler).trigger("selectionChanged") });
+        $("#changed").change(function() { $(MyEventHandler).trigger("selectionChanged") });
+
+        $(".btn").click(function() { $('.btn').each(function() {$(this).removeClass('active')}); $(this).addClass('active')});
+        $("#ethHistbtn").click(function() { $("#relHist").hide(); $("#ethHist").show() });
+        $("#relHistbtn").click(function() { $("#ethHist").hide(); $("#relHist").show() });
+
+        var allData = []
+        var metaData = []
+
+        $('.input-daterange').datepicker({
+            clearBtn: false,
+        }).on("changeDate", function() {$(MyEventHandler).trigger("selectionChanged"); })
+
+        $(".input-daterange").change(function() {$(MyEventHandler).trigger("selectionChanged"); })
+
+
+        var initFilters = function() {
+            d3.select("#filter-member")
+                .selectAll("option")
+                    .data(metaData["people"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-sponsor")
+                .selectAll("option")
+                    .data(metaData["sponsors"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-state")
+                .selectAll("option")
+                    .data(metaData["states"])
+                .enter().append("option")
+                    .text(function(d) { return d[1] })
+                    .attr("value", function(d) { return d[0] });
+            d3.select("#filter-country")
+                .selectAll("option")
+                    .data(metaData["countries"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-committee")
+                .selectAll("option")
+                    .data(metaData["committees"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-ethnicity")
+                .selectAll("option")
+                    .data(metaData["ethnicities"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+            d3.select("#filter-religion")
+                .selectAll("option")
+                    .data(metaData["religions"])
+                .enter().append("option")
+                    .text(function(d) { return d });
+
+            $("#filter-member").chosen({allow_single_deselect: true});
+            $("#filter-country").chosen({allow_single_deselect: true});
+            $("#filter-state").chosen({allow_single_deselect: true});
+            $("#filter-party").chosen({allow_single_deselect: true});
+            $("#filter-committee").chosen({allow_single_deselect: true});
+            $("#filter-ethnicity").chosen({allow_single_deselect: true});
+            $("#filter-religion").chosen({allow_single_deselect: true});
+            $("#filter-sponsor").chosen({allow_single_deselect: true});
+            $("#color-by").chosen({allow_single_deselect: true});
+            
+
+        }
+
+            
+
+        var initVis = function(){
+            MyEventHandler = new Object();
+
+            map_vis = new MapVis(d3.select("#mapVis"), allData, metaData, MyEventHandler);
+            table_vis = new TableVis(d3.select("#tableVis"), allData, metaData, MyEventHandler)
+            list_vis = new ListVis(d3.select("#update-lists"), allData, metaData, MyEventHandler)
+            graph_vis = new GraphVis(d3.select("#graphVis"), allData, metaData, MyEventHandler)
+            party_hist = new PartyHist(d3.select("#partyHist"), allData, metaData, MyEventHandler)
+            eth_hist = new EthHist(d3.select("#ethHist"), allData, metaData, MyEventHandler)
+            rel_hist = new RelHist(d3.select("#relHist"), allData, metaData, MyEventHandler)
+
+
+            $(MyEventHandler).bind("selectionChanged", function(event){map_vis.onSelectionChange(), table_vis.onSelectionChange(); list_vis.onSelectionChange(); graph_vis.onSelectionChange(); party_hist.onSelectionChange(); eth_hist.onSelectionChange(); rel_hist.onSelectionChange(); });        }
+
+        var dataLoaded = function(error, _allData, _metaData){
+            if(!error){
+                allData = _allData.map(function(d){
+                    return d
+                })
+                metaData = _metaData
+                initFilters();
+                initVis();
+                $("#startviz").fadeIn()
+                $("#startviz").click(function() { $("#landing").hide() })
+            }
+        }
+
+        var startHere = function(){
+            queue()
+                .defer(d3.json, "data/travel.json")
+                .defer(d3.json, "data/metadata.json")
+                .await(dataLoaded)
+        }
+        startHere();
+
+    })
+    /**
+     * Helper function that gets the width of a D3 element
+     */
+    var getInnerWidth = function(element) {
+        var style = window.getComputedStyle(element.node(), null);
+
+        return parseInt(style.getPropertyValue('width'));
+    }
+    </script>
+</body>
+</html>
